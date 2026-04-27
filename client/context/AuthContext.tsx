@@ -9,6 +9,7 @@ type AuthContextType = {
     login: (userdata: any, token: string, refreshToken: string) => Promise<void>
     logout: () => Promise<void>
     clearAuth: () => Promise<void>
+    updateUser: (partial: Record<string, unknown>) => void
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -67,9 +68,18 @@ export function AuthProvider({children}:{children:React.ReactNode}) {
             setIsLoading(false);
         }
     };
+
+    const updateUser = (partial: Record<string, unknown>) => {
+        setUser((prev: any) => {
+            if (!prev) return prev;
+            const next = { ...prev, ...partial };
+            SecureStore.setItemAsync('user', JSON.stringify(next)).catch(() => {});
+            return next;
+        });
+    };
     
     return (
-        <AuthContext.Provider value={{ user, token, isLoading, login, logout, clearAuth }}>
+        <AuthContext.Provider value={{ user, token, isLoading, login, logout, clearAuth, updateUser }}>
             {children}
         </AuthContext.Provider>
     );  
