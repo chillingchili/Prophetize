@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 04-03-PLAN.md
-last_updated: "2026-04-18T11:03:07.279Z"
-last_activity: 2026-04-18
+stopped_at: Completed 10-05-PLAN.md
+last_updated: "2026-04-27T22:02:14Z"
+last_activity: 2026-04-27
 progress:
-  total_phases: 9
+  total_phases: 11
   completed_phases: 3
-  total_plans: 14
-  completed_plans: 9
-  percent: 64
+  total_plans: 17
+  completed_plans: 14
+  percent: 82
 ---
 
 # Project State
@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-04-13)
 
 ## Current Position
 
-Phase: 9
-Plan: Not started
-Status: Ready to execute
-Last activity: 2026-04-18
+Phase: 10
+Plan: 06
+Status: executing
+Last activity: 2026-04-27
 
-Progress: [██░░░░░░░░] 25%
+Progress: [████████░░] 80%
 
 ## Performance Metrics
 
@@ -60,6 +60,7 @@ Progress: [██░░░░░░░░] 25%
 | Phase 04 P03 | 10m | 2 tasks | 5 files |
 | Phase 04 P03 | 10m | 2 tasks | 5 files |
 | Phase 08 P01 | 24 min | 2 tasks | 4 files |
+| Phase 10 P05 | 10m | 3 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -84,7 +85,8 @@ Progress: [██░░░░░░░░] 25%
 - [Phase 04]: Use backend-first notification inbox fetch with explicit unsupported-endpoint fallback instead of demo data.
 - [Phase 04]: Expose realtime connection state via shared subscribeRealtime callbacks to keep singleton listener binding bounded.
 - [Phase 04]: Use backend-first notification inbox fetch with explicit unsupported-endpoint fallback instead of demo data.
-- [Phase 04]: Use backend-first notification inbox fetch with explicit unsupported-endpoint fallback instead of demo data.
+- [Phase 10]: Replaced standalone Log Out button with destructive SettingsItem inside the Settings card for visual consistency.
+- [Phase 10]: Preserved existing data fetching and state management during profile visual reorganization.
 
 ### Roadmap Evolution
 
@@ -92,6 +94,8 @@ Progress: [██░░░░░░░░] 25%
 - Phase 7 added: using the ui audit, fix the following UI to make it according to standards, do not forget to use the given UI already in the app
 - Phase 8 added: Revamp the Create market to be more user friendly and look better to the eye keepin the same theme through out the entrie app
 - Phase 9 added: Create an admin dahsbaord for the admins to manage users, look at data, resolve user conflicts, and most importantly, manage the user created markets. Use react-bits and shadcn ui to make it simple and effective enough
+- Phase 10 added: refactor and add mre settings to profile page
+- Phase 11 added: change auth of admin web to be simpler
 
 ### Pending Todos
 
