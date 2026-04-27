@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 11-01-PLAN.md
-last_updated: "2026-04-27T14:31:44.766Z"
+stopped_at: Completed 11-02-PLAN.md
+last_updated: "2026-04-27T14:37:22.985Z"
 last_activity: 2026-04-27
 progress:
   total_phases: 11
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 18
-  completed_plans: 12
+  completed_plans: 13
   percent: 75
 ---
 
@@ -64,6 +64,7 @@ Progress: [████████░░] 75%
 | Phase 10 P05 | 10m | 3 tasks | 9 files |
 | Phase 10 P06 | 15m | 3 tasks | 7 files |
 | Phase 11-change-auth-of-admin-web-to-be-simpler P01 | 5min | 2 tasks | 2 files |
+| Phase 11-change-auth-of-admin-web-to-be-simpler P02 | 5min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -94,6 +95,7 @@ Progress: [████████░░] 75%
 - [Phase 10]: Reused existing supabase client instance in security.tsx to call auth.updateUser for password changes.
 - [Phase 10]: Stored app preferences in AsyncStorage with simple boolean string keys for persistence across restarts.
 - [Phase 11-change-auth-of-admin-web-to-be-simpler]: Used localStorage for web platform auth persistence instead of SecureStore; token keys renamed to admin_access_token/admin_refresh_token for clarity; registerClearAuth wired in AdminAuthProvider useEffect
+- [Phase 11-change-auth-of-admin-web-to-be-simpler]: Used inline styles for login page centering to avoid modifying styles.css; replaced isAuthed derived from getStoredAdminToken() with useAdminAuth().isAuthed; renamed isLoading to isQueueLoading to avoid collision with auth isLoading; loadQueues guards on isAuthed instead of manual token check; handleLogout clears all queue state
 
 ### Roadmap Evolution
 
@@ -114,6 +116,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-27T14:31:44.762Z
-Stopped at: Completed 11-01-PLAN.md
+Last session: 2026-04-27T14:37:22.981Z
+Stopped at: Completed 11-02-PLAN.md
 Resume file: None
