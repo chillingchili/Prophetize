@@ -15,6 +15,7 @@ import * as api from '@/utils/api';
 
 import { ProfileAvatar } from '@/components/profile/profile-avatar';
 import { EmptyState } from '@/components/common/empty-state';
+import { SettingsItem } from '@/components/profile/settings-item';
 
 const CREATED_MARKET_OPENABLE_STATUSES = ['active', 'closed', 'resolving', 'disputed', 'finalized'];
 
@@ -601,18 +602,32 @@ export default function ProfileScreen() {
           </View>
         ) : null}
 
-        {/* Log Out */}
+        {/* Settings */}
         {isOwnProfile ? (
           <View className="px-5 mt-6 mb-2">
-            <Pressable
-              onPress={handleLogout}
-              className="rounded-2xl py-3 items-center"
-              style={{ backgroundColor: theme.surface, borderWidth: 1, borderColor: theme.danger }}
+            <SectionHeader title="Settings" theme={theme} />
+            <View
+              className="rounded-2xl overflow-hidden mt-1"
+              style={{
+                backgroundColor: theme.surface,
+                borderWidth: 1,
+                borderColor: theme.borderSoft,
+              }}
             >
-              <Text className="font-grotesk-bold text-[14px]" style={{ color: theme.danger }}>
-                Log Out
-              </Text>
-            </Pressable>
+              <SettingsItem icon="person" label="Edit Profile" onPress={() => router.push('/settings/edit-profile')} />
+              <View className="h-[1px]" style={{ backgroundColor: theme.borderSoft }} />
+              <SettingsItem icon="notifications" label="Notifications" onPress={() => router.push('/settings/notifications')} />
+              <View className="h-[1px]" style={{ backgroundColor: theme.borderSoft }} />
+              <SettingsItem icon="settings" label="App Settings" onPress={() => router.push('/settings/app-settings')} />
+              <View className="h-[1px]" style={{ backgroundColor: theme.borderSoft }} />
+              <SettingsItem icon="lock" label="Security" onPress={() => router.push('/settings/security')} />
+              <View className="h-[1px]" style={{ backgroundColor: theme.borderSoft }} />
+              <SettingsItem icon="help-outline" label="Support" onPress={() => router.push('/settings/support')} />
+              <View className="h-[1px]" style={{ backgroundColor: theme.borderSoft }} />
+              <SettingsItem icon="info" label="About" onPress={() => router.push('/settings/about')} />
+              <View className="h-[1px]" style={{ backgroundColor: theme.borderSoft }} />
+              <SettingsItem icon="logout" label="Log Out" destructive onPress={handleLogout} />
+            </View>
           </View>
         ) : null}
       </ScrollView>

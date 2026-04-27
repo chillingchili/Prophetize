@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { UI_COLORS } from '@/constants/ui-tokens';
+import { useAppTheme } from '@/hooks/use-app-theme';
 
 type SettingsItemProps = {
   icon: keyof typeof MaterialIcons.glyphMap;
@@ -20,8 +20,9 @@ export function SettingsItem({
   destructive = false,
   onPress,
 }: SettingsItemProps) {
-  const textColor = destructive ? UI_COLORS.danger : UI_COLORS.textPrimary;
-  const iconColor = destructive ? UI_COLORS.danger : UI_COLORS.accent;
+  const theme = useAppTheme();
+  const textColor = destructive ? theme.danger : theme.textPrimary;
+  const iconColor = destructive ? theme.danger : theme.accent;
 
   return (
     <Pressable
@@ -36,7 +37,7 @@ export function SettingsItem({
         {/* Icon with background - like rest of app */}
         <View
           className="w-10 h-10 rounded-full items-center justify-center"
-          style={{ backgroundColor: UI_COLORS.accentSoft }}
+          style={{ backgroundColor: theme.accentSoft }}
         >
           <MaterialIcons name={icon} size={20} color={iconColor} />
         </View>
@@ -48,14 +49,14 @@ export function SettingsItem({
 
         {/* Value (optional) */}
         {value && (
-          <Text className="text-sm font-inter mr-2" style={{ color: UI_COLORS.textMuted }}>
+          <Text className="text-sm font-inter mr-2" style={{ color: theme.textMuted }}>
             {value}
           </Text>
         )}
 
         {/* Chevron */}
         {showChevron && (
-          <MaterialIcons name="chevron-right" size={20} color={UI_COLORS.textMuted} />
+          <MaterialIcons name="chevron-right" size={20} color={theme.textMuted} />
         )}
       </View>
     </Pressable>
