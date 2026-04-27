@@ -203,11 +203,11 @@ Plans:
 **Goal:** Improve profile page visual clarity so users know where to look, and add standard profile settings (Edit Profile, App Settings, Notifications, Security, Support, About).
 **Requirements**: [UI-SET-01, UI-SET-02, UI-SET-03, UI-SET-04]
 **Depends on:** Phase 9
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 
 Plans:
 - [x] 10-05-PLAN.md — Reorganize profile layout for clarity and add settings menu with navigation
-- [ ] 10-06-PLAN.md — Backend edit-profile endpoint and functional settings screens (Edit Profile, App Settings, Security)
+- [x] 10-06-PLAN.md — Backend edit-profile endpoint and functional settings screens (Edit Profile, App Settings, Security)
 
 ### Phase 11: change auth of admin web to be simpler
 
