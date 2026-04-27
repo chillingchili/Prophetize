@@ -214,7 +214,7 @@ Plans:
 **Goal:** Replace manual token-pasting authentication with a proper email/password login flow using the same backend endpoints as the mobile app.
 **Requirements**: [ADM-AUTH-01, ADM-AUTH-02, ADM-AUTH-03, ADM-AUTH-04]
 **Depends on:** Phase 10
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
 - [ ] 11-01-PLAN.md — Build admin auth context with token persistence and HTTP client 401 recovery
