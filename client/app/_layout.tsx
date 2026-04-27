@@ -80,6 +80,12 @@ function RootLayout() {
       <Stack.Screen name="categories" options={{ title: 'Categories', headerShown: false }}/>
       <Stack.Screen name="notifications" options={{ title: 'Notifications', headerShown: false }}/>
       <Stack.Screen name="tabs" options={{ title: 'tabs', headerShown: false }}/>
+      <Stack.Screen name="settings/edit-profile" options={{ title: 'Edit Profile', headerShown: false }} />
+      <Stack.Screen name="settings/notifications" options={{ title: 'Notifications', headerShown: false }} />
+      <Stack.Screen name="settings/app-settings" options={{ title: 'App Settings', headerShown: false }} />
+      <Stack.Screen name="settings/security" options={{ title: 'Security', headerShown: false }} />
+      <Stack.Screen name="settings/support" options={{ title: 'Support', headerShown: false }} />
+      <Stack.Screen name="settings/about" options={{ title: 'About', headerShown: false }} />
     </Stack>
   );
 }
