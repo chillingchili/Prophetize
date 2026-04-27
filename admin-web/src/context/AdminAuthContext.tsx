@@ -1,5 +1,5 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
-import { apiPost } from '../lib/http';
+import { apiPost, registerClearAuth } from '../lib/http';
 
 type AdminUser = { id: string; email: string; username: string; avatar_url?: string; balance?: number; created_at?: string };
 
@@ -21,6 +21,7 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    registerClearAuth(clearAuth);
     const stored = localStorage.getItem('admin_access_token');
     const storedUser = localStorage.getItem('admin_user');
     if (stored) setToken(stored);
