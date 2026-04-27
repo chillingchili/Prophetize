@@ -10,8 +10,7 @@ import * as Haptics from 'expo-haptics';
 import { useAuth } from '../../context/AuthContext';
 import { useUserStore } from '../../context/useUserStore';
 
-import { UI_COLORS } from '@/constants/ui-tokens';
-import { ExploreTheme } from '@/constants/explore-theme';
+import { useAppTheme } from '../../hooks/use-app-theme';
 import * as api from '@/utils/api';
 
 import { ProfileAvatar } from '@/components/profile/profile-avatar';
@@ -36,19 +35,19 @@ const formatDate = (value?: string | null) => {
   return parsed.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 };
 
-const statusColors = (status: string) => {
+const statusColors = (status: string, theme: ReturnType<typeof useAppTheme>) => {
   switch (status.toLowerCase()) {
     case 'active':
       return { bg: '#DFF7FE', border: '#82DAEF', text: '#007FA2' };
     case 'pending':
       return { bg: '#FFF5D9', border: '#F7D27B', text: '#8A5B00' };
     case 'rejected':
-      return { bg: '#FEE2E2', border: '#FCA5A5', text: UI_COLORS.danger };
+      return { bg: '#FEE2E2', border: '#FCA5A5', text: theme.danger };
     case 'finalized':
     case 'closed':
-      return { bg: '#E7F8F0', border: '#A5E2C2', text: UI_COLORS.success };
+      return { bg: '#E7F8F0', border: '#A5E2C2', text: theme.success };
     default:
-      return { bg: UI_COLORS.surfaceSoft, border: UI_COLORS.borderSoft, text: UI_COLORS.textSecondary };
+      return { bg: theme.surfaceSoft, border: theme.borderSoft, text: theme.textSecondary };
   }
 };
 
@@ -86,12 +85,25 @@ const toActivityLabel = (type: string) => {
   return 'Activity';
 };
 
+function SectionHeader({ title, theme }: { title: string; theme: ReturnType<typeof useAppTheme> }) {
+  return (
+    <View className="flex-row items-center mb-3">
+      <View className="h-5 justify-center" style={{ borderLeftWidth: 3, borderLeftColor: theme.accent }}>
+        <Text className="font-grotesk-bold text-[17px] ml-2" style={{ color: theme.textPrimary }}>
+          {title}
+        </Text>
+      </View>
+    </View>
+  );
+}
+
 export default function ProfileScreen() {
   const router = useRouter();
   const { userId: routeUserId, initialFollowing } = useLocalSearchParams<{ userId?: string; initialFollowing?: string }>();
   const { logout, user } = useAuth();
   const { userData, fetchUserData } = useUserStore();
   const tabBarHeight = useBottomTabBarHeight();
+  const theme = useAppTheme();
 
   const [summary, setSummary] = useState<api.PortfolioSummary | null>(null);
   const [activities, setActivities] = useState<api.PortfolioActivityTransaction[]>([]);
@@ -267,9 +279,9 @@ export default function ProfileScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView className="flex-1" style={{ backgroundColor: UI_COLORS.pageBg }}>
+      <SafeAreaView className="flex-1" style={{ backgroundColor: theme.pageBg }}>
         <View className="flex-1 items-center justify-center">
-          <Text className="text-base font-jetbrain" style={{ color: UI_COLORS.textSecondary }}>
+          <Text className="text-base font-jetbrain" style={{ color: theme.textSecondary }}>
             Loading profile...
           </Text>
         </View>
@@ -278,56 +290,87 @@ export default function ProfileScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1" style={{ backgroundColor: UI_COLORS.pageBg }}>
+    <SafeAreaView className="flex-1" style={{ backgroundColor: theme.pageBg }}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={UI_COLORS.accent}
+            tintColor={theme.accent}
           />
         }
         contentContainerStyle={{ paddingBottom: tabBarHeight + 24 }}
       >
+        {/* Hero / Identity Card */}
         <View className="px-5 pt-4">
-          <View className="rounded-3xl overflow-hidden" style={{ borderWidth: 1, borderColor: UI_COLORS.accentBorder, backgroundColor: UI_COLORS.surface }}>
-            <View className="px-4 py-3" style={{ backgroundColor: UI_COLORS.accentSoft }}>
-              <Text className="font-jetbrain text-[11px] tracking-widest" style={{ color: UI_COLORS.linkPressed }}>
+          <View
+            className="rounded-3xl overflow-hidden"
+            style={{
+              borderWidth: 1,
+              borderColor: theme.accentBorder,
+              backgroundColor: theme.surfaceElevated,
+            }}
+          >
+            <View className="px-4 py-2.5" style={{ backgroundColor: theme.surfaceMuted }}>
+              <Text className="font-jetbrain text-[10px] tracking-widest" style={{ color: theme.textSecondary }}>
                 CREATOR PROFILE
               </Text>
             </View>
 
-            <View className="p-4">
+            <View className="p-5">
               <View className="flex-row items-center">
-                <ProfileAvatar
-                  imageUrl={summary?.avatar_url || user?.avatar_url}
-                  username={displayName}
-                  size="md"
-                  editable={false}
-                />
-                <View className="ml-3 flex-1">
-                  <Text className="font-grotesk-bold text-[24px]" style={{ color: UI_COLORS.textPrimary }}>
+                <View
+                  className="rounded-full items-center justify-center"
+                  style={{
+                    borderWidth: 2,
+                    borderColor: theme.accent,
+                    padding: 2,
+                  }}
+                >
+                  <ProfileAvatar
+                    imageUrl={summary?.avatar_url || user?.avatar_url}
+                    username={displayName}
+                    size="lg"
+                    editable={false}
+                  />
+                </View>
+                <View className="ml-4 flex-1">
+                  <Text className="font-grotesk-bold text-[26px]" style={{ color: theme.textPrimary }}>
                     {displayName}
                   </Text>
                   {joinedLabel ? (
-                    <Text className="font-jetbrain text-[12px] mt-1" style={{ color: UI_COLORS.textSecondary }}>
+                    <Text className="font-jetbrain text-[12px] mt-1" style={{ color: theme.textSecondary }}>
                       Joined {joinedLabel}
                     </Text>
                   ) : null}
                 </View>
               </View>
 
-              <View className="flex-row mt-4 gap-2">
-                <View className="rounded-2xl px-3 py-2 flex-1" style={{ backgroundColor: '#DDF8FF', borderWidth: 1, borderColor: '#89DEEF' }}>
-                  <Text className="font-jetbrain text-[10px]" style={{ color: '#146A82' }}>NET WORTH</Text>
-                  <Text className="font-grotesk-bold text-[17px] mt-1" style={{ color: '#0B1F2A' }}>
+              <View className="flex-row mt-5 gap-2">
+                <View
+                  className="rounded-2xl px-3 py-2.5 flex-1"
+                  style={{
+                    backgroundColor: theme.surface,
+                    borderWidth: 1,
+                    borderColor: theme.borderSoft,
+                  }}
+                >
+                  <Text className="font-jetbrain text-[10px]" style={{ color: theme.textMuted }}>NET WORTH</Text>
+                  <Text className="font-grotesk-bold text-[17px] mt-1" style={{ color: theme.textPrimary }}>
                     {formatCurrency(netWorthValue)}
                   </Text>
                 </View>
-                <View className="rounded-2xl px-3 py-2 flex-1" style={{ backgroundColor: '#EEF6FA', borderWidth: 1, borderColor: '#D0E5EE' }}>
-                  <Text className="font-jetbrain text-[10px]" style={{ color: UI_COLORS.textSecondary }}>BALANCE</Text>
-                  <Text className="font-grotesk-bold text-[17px] mt-1" style={{ color: UI_COLORS.textPrimary }}>
+                <View
+                  className="rounded-2xl px-3 py-2.5 flex-1"
+                  style={{
+                    backgroundColor: theme.surface,
+                    borderWidth: 1,
+                    borderColor: theme.borderSoft,
+                  }}
+                >
+                  <Text className="font-jetbrain text-[10px]" style={{ color: theme.textMuted }}>BALANCE</Text>
+                  <Text className="font-grotesk-bold text-[17px] mt-1" style={{ color: theme.textPrimary }}>
                     {formatCurrency(balanceValue)}
                   </Text>
                 </View>
@@ -342,16 +385,16 @@ export default function ProfileScreen() {
                     disabled={followLoading}
                     className="px-4 py-2 rounded-full"
                     style={{
-                      backgroundColor: isFollowing ? UI_COLORS.textMuted : UI_COLORS.success,
+                      backgroundColor: isFollowing ? theme.textMuted : theme.success,
                       opacity: followLoading ? 0.7 : 1,
                     }}
                   >
-                    <Text className="font-jetbrain-bold text-[12px]" style={{ color: UI_COLORS.surface }}>
+                    <Text className="font-jetbrain-bold text-[12px]" style={{ color: theme.surface }}>
                       {followLoading ? 'Updating...' : isFollowing ? 'Following' : 'Follow'}
                     </Text>
                   </Pressable>
                   {followErrorMessage ? (
-                    <Text className="font-jetbrain text-[11px] mt-2" style={{ color: ExploreTheme.searchHint }}>
+                    <Text className="font-jetbrain text-[11px] mt-2" style={{ color: theme.danger }}>
                       {followErrorMessage}
                     </Text>
                   ) : null}
@@ -363,42 +406,77 @@ export default function ProfileScreen() {
 
         {loadError ? (
           <View className="px-5 mt-3">
-            <Text className="font-jetbrain text-[12px]" style={{ color: ExploreTheme.searchHint }}>
+            <Text className="font-jetbrain text-[12px]" style={{ color: theme.danger }}>
               {loadError}
             </Text>
           </View>
         ) : null}
 
+        {/* Stats Grid */}
         {isOwnProfile ? (
-          <View className="px-5 mt-4">
-            <View className="flex-row gap-2">
-              <View className="flex-1 rounded-2xl p-3" style={{ backgroundColor: UI_COLORS.surface, borderWidth: 1, borderColor: UI_COLORS.accentBorder }}>
-                <Text className="font-jetbrain text-[10px]" style={{ color: UI_COLORS.textSecondary }}>PREDICTIONS</Text>
-                <Text className="font-grotesk-bold text-[20px] mt-1" style={{ color: UI_COLORS.textPrimary }}>{predictionsCount}</Text>
+          <View className="px-5 mt-6">
+            <SectionHeader title="Statistics" theme={theme} />
+            <View className="flex-row gap-3">
+              <View
+                className="flex-1 rounded-xl p-3"
+                style={{
+                  backgroundColor: theme.surface,
+                  borderWidth: 1,
+                  borderColor: theme.borderSoft,
+                }}
+              >
+                <Text className="font-jetbrain text-[10px] uppercase tracking-wider" style={{ color: theme.textMuted }}>
+                  PREDICTIONS
+                </Text>
+                <Text className="font-grotesk-bold text-[20px] mt-1" style={{ color: theme.textPrimary }}>
+                  {predictionsCount}
+                </Text>
               </View>
-              <View className="flex-1 rounded-2xl p-3" style={{ backgroundColor: UI_COLORS.surface, borderWidth: 1, borderColor: UI_COLORS.borderSoft }}>
-                <Text className="font-jetbrain text-[10px]" style={{ color: UI_COLORS.textSecondary }}>OPEN VALUE</Text>
-                <Text className="font-grotesk-bold text-[20px] mt-1" style={{ color: UI_COLORS.textPrimary }}>{formatCurrency(positionsValue)}</Text>
+              <View
+                className="flex-1 rounded-xl p-3"
+                style={{
+                  backgroundColor: theme.surface,
+                  borderWidth: 1,
+                  borderColor: theme.borderSoft,
+                }}
+              >
+                <Text className="font-jetbrain text-[10px] uppercase tracking-wider" style={{ color: theme.textMuted }}>
+                  OPEN VALUE
+                </Text>
+                <Text className="font-grotesk-bold text-[20px] mt-1" style={{ color: theme.textPrimary }}>
+                  {formatCurrency(positionsValue)}
+                </Text>
               </View>
-              <View className="flex-1 rounded-2xl p-3" style={{ backgroundColor: '#FDF3E0', borderWidth: 1, borderColor: '#F5D59A' }}>
-                <Text className="font-jetbrain text-[10px]" style={{ color: '#8A5B00' }}>BIGGEST WIN</Text>
-                <Text className="font-grotesk-bold text-[20px] mt-1" style={{ color: '#553600' }}>{formatCurrency(biggestWin)}</Text>
+              <View
+                className="flex-1 rounded-xl p-3"
+                style={{
+                  backgroundColor: theme.surface,
+                  borderWidth: 1,
+                  borderColor: theme.borderSoft,
+                }}
+              >
+                <Text className="font-jetbrain text-[10px] uppercase tracking-wider" style={{ color: theme.textMuted }}>
+                  BIGGEST WIN
+                </Text>
+                <Text className="font-grotesk-bold text-[20px] mt-1" style={{ color: theme.success }}>
+                  {formatCurrency(biggestWin)}
+                </Text>
               </View>
             </View>
           </View>
         ) : null}
 
-        <View className="px-5 mt-5">
-          <View className="flex-row items-center justify-between mb-3">
-            <Text className="font-grotesk-bold text-[19px]" style={{ color: ExploreTheme.titleText }}>
-              {isOwnProfile ? 'Your Created Markets' : 'Created Markets'}
-            </Text>
-            <Text className="font-jetbrain text-[11px]" style={{ color: UI_COLORS.textSecondary }}>
-              {createdMarkets.length} total
-            </Text>
-          </View>
-
-          <View className="rounded-2xl overflow-hidden" style={{ backgroundColor: UI_COLORS.surface, borderWidth: 1, borderColor: UI_COLORS.borderSoft }}>
+        {/* Created Markets */}
+        <View className="px-5 mt-6">
+          <SectionHeader title={isOwnProfile ? 'Your Created Markets' : 'Created Markets'} theme={theme} />
+          <View
+            className="rounded-2xl overflow-hidden mt-1"
+            style={{
+              backgroundColor: theme.surface,
+              borderWidth: 1,
+              borderColor: theme.borderSoft,
+            }}
+          >
             {createdMarkets.length === 0 ? (
               <EmptyState
                 icon="storefront"
@@ -409,16 +487,16 @@ export default function ProfileScreen() {
             ) : (
               createdMarkets.map((market, index) => {
                 const canOpen = CREATED_MARKET_OPENABLE_STATUSES.includes(market.status.toLowerCase());
-                const colors = statusColors(market.status);
+                const colors = statusColors(market.status, theme);
                 return (
                   <View key={market.id}>
                     <View className="px-4 py-3">
                       <View className="flex-row items-start justify-between">
                         <View className="flex-1 pr-3">
-                          <Text className="font-grotesk-bold text-[15px]" style={{ color: UI_COLORS.textPrimary }}>
+                          <Text className="font-grotesk-bold text-[15px]" style={{ color: theme.textPrimary }}>
                             {market.title}
                           </Text>
-                          <Text className="font-jetbrain text-[11px] mt-1" style={{ color: UI_COLORS.textSecondary }}>
+                          <Text className="font-jetbrain text-[11px] mt-1" style={{ color: theme.textSecondary }}>
                             {market.category} • Resolves {formatDate(market.endDate)}
                           </Text>
                         </View>
@@ -430,7 +508,7 @@ export default function ProfileScreen() {
                       </View>
 
                       <View className="flex-row items-center justify-between mt-3">
-                        <Text className="font-jetbrain text-[11px]" style={{ color: UI_COLORS.textSecondary }}>
+                        <Text className="font-jetbrain text-[11px]" style={{ color: theme.textSecondary }}>
                           Volume {formatCurrency(market.totalVolume)}
                         </Text>
                         {canOpen ? (
@@ -439,21 +517,21 @@ export default function ProfileScreen() {
                               router.push({ pathname: '/marketDetails', params: { id: String(market.id) } });
                             }}
                             className="rounded-full px-3 py-1"
-                            style={{ backgroundColor: UI_COLORS.accentSoft, borderWidth: 1, borderColor: UI_COLORS.accentBorder }}
+                            style={{ backgroundColor: theme.accentSoft, borderWidth: 1, borderColor: theme.accentBorder }}
                           >
-                            <Text className="font-jetbrain text-[11px]" style={{ color: UI_COLORS.linkPressed }}>
+                            <Text className="font-jetbrain text-[11px]" style={{ color: theme.linkPressed }}>
                               Open
                             </Text>
                           </Pressable>
                         ) : (
-                          <Text className="font-jetbrain text-[11px]" style={{ color: UI_COLORS.textMuted }}>
+                          <Text className="font-jetbrain text-[11px]" style={{ color: theme.textMuted }}>
                             Not public yet
                           </Text>
                         )}
                       </View>
                     </View>
                     {index < createdMarkets.length - 1 ? (
-                      <View className="h-[1px] ml-4" style={{ backgroundColor: UI_COLORS.borderSoft }} />
+                      <View className="h-[1px] ml-4" style={{ backgroundColor: theme.borderSoft }} />
                     ) : null}
                   </View>
                 );
@@ -462,12 +540,18 @@ export default function ProfileScreen() {
           </View>
         </View>
 
+        {/* Recent Activity */}
         {isOwnProfile ? (
-          <View className="px-5 mt-5">
-            <Text className="font-grotesk-bold text-[19px] mb-3" style={{ color: ExploreTheme.titleText }}>
-              Recent Activity
-            </Text>
-            <View className="rounded-2xl overflow-hidden" style={{ backgroundColor: UI_COLORS.surface, borderWidth: 1, borderColor: UI_COLORS.borderSoft }}>
+          <View className="px-5 mt-6">
+            <SectionHeader title="Recent Activity" theme={theme} />
+            <View
+              className="rounded-2xl overflow-hidden mt-1"
+              style={{
+                backgroundColor: theme.surface,
+                borderWidth: 1,
+                borderColor: theme.borderSoft,
+              }}
+            >
               {activities.length === 0 ? (
                 <EmptyState
                   icon="history"
@@ -485,29 +569,29 @@ export default function ProfileScreen() {
 
                   return (
                     <View key={activity.id}>
-                      <View className="px-4 py-3 flex-row">
-                        <View className="w-9 h-9 rounded-full items-center justify-center mr-3" style={{ backgroundColor: UI_COLORS.accentSoft }}>
-                          <MaterialIcons name={icon} size={18} color={UI_COLORS.linkPressed} />
+                      <View className="px-4 py-4 flex-row">
+                        <View className="w-9 h-9 rounded-full items-center justify-center mr-3" style={{ backgroundColor: theme.accentSoft }}>
+                          <MaterialIcons name={icon} size={18} color={theme.linkPressed} />
                         </View>
 
                         <View className="flex-1">
                           <View className="flex-row items-start justify-between">
                             <View className="flex-1 pr-2">
-                              <Text className="font-grotesk-bold text-[14px]" style={{ color: UI_COLORS.textPrimary }}>
+                              <Text className="font-grotesk-bold text-[14px]" style={{ color: theme.textPrimary }}>
                                 {activity.market_title}
                               </Text>
-                              <Text className="font-jetbrain text-[11px] mt-1" style={{ color: UI_COLORS.textSecondary }}>
+                              <Text className="font-jetbrain text-[11px] mt-1" style={{ color: theme.textSecondary }}>
                                 {label} • {formatDate(activity.created_at)}
                               </Text>
                             </View>
-                            <Text className="font-grotesk-bold text-[14px]" style={{ color: isPositive ? UI_COLORS.success : UI_COLORS.danger }}>
+                            <Text className="font-grotesk-bold text-[14px]" style={{ color: isPositive ? theme.success : theme.danger }}>
                               {signedAmount}
                             </Text>
                           </View>
                         </View>
                       </View>
                       {index < activities.length - 1 ? (
-                        <View className="h-[1px] ml-4" style={{ backgroundColor: UI_COLORS.borderSoft }} />
+                        <View className="h-[1px] ml-4" style={{ backgroundColor: theme.borderSoft }} />
                       ) : null}
                     </View>
                   );
@@ -517,14 +601,15 @@ export default function ProfileScreen() {
           </View>
         ) : null}
 
+        {/* Log Out */}
         {isOwnProfile ? (
-          <View className="px-5 mt-5 mb-2">
+          <View className="px-5 mt-6 mb-2">
             <Pressable
               onPress={handleLogout}
               className="rounded-2xl py-3 items-center"
-              style={{ backgroundColor: UI_COLORS.surface, borderWidth: 1, borderColor: '#FECACA' }}
+              style={{ backgroundColor: theme.surface, borderWidth: 1, borderColor: theme.danger }}
             >
-              <Text className="font-grotesk-bold text-[14px]" style={{ color: UI_COLORS.danger }}>
+              <Text className="font-grotesk-bold text-[14px]" style={{ color: theme.danger }}>
                 Log Out
               </Text>
             </Pressable>
