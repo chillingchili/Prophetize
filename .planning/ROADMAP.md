@@ -211,10 +211,11 @@ Plans:
 
 ### Phase 11: change auth of admin web to be simpler
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** Replace manual token-pasting authentication with a proper email/password login flow using the same backend endpoints as the mobile app.
+**Requirements**: [ADM-AUTH-01, ADM-AUTH-02, ADM-AUTH-03, ADM-AUTH-04]
 **Depends on:** Phase 10
-**Plans:** 0 plans
+**Plans:** 2 plans
 
 Plans:
-- [ ] TBD (run /gsd-plan-phase 11 to break down)
+- [ ] 11-01-PLAN.md — Build admin auth context with token persistence and HTTP client 401 recovery
+- [ ] 11-02-PLAN.md — Create login form, wire auth into App.tsx, and add sidebar logout
