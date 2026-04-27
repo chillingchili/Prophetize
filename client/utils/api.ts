@@ -114,6 +114,25 @@ export const get = async(endpoint:string) => {
     }
 }
 
+export const patch = async(endpoint:string, body?:object) => {
+    const token = await getToken();
+    const doRequest = () => fetch(baseUrl+endpoint, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type':'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify(body)
+    });
+    try {
+        const response = await doRequest();
+        return handleResponse(response, doRequest);
+    } catch (error) {
+        console.error(`PATCH ${endpoint} failed`, error);
+        return { ok: false, data: { error: NETWORK_ERROR_MESSAGE } };
+    }
+}
+
 export type LeaderboardPeriod = 'weekly' | 'all_time';
 
 export type LeaderboardApiEntry = {

@@ -111,6 +111,38 @@ export const refreshUserToken = async(req:Request, res:Response) => {
     });
 }
 
+// PATCH /profile - Update profile details
+export const updateProfile = async (req: AuthRequest, res: Response) => {
+    const userId = req.user.id;
+    const { username, avatar_url } = req.body;
+
+    // Validation
+    if (username !== undefined) {
+        if (typeof username !== 'string' || username.trim().length < 2 || username.trim().length > 30) {
+            return res.status(400).json({ error: "Username must be 2–30 characters." });
+        }
+    }
+    if (avatar_url !== undefined && (typeof avatar_url !== 'string' || avatar_url.length > 500)) {
+        return res.status(400).json({ error: "Avatar URL is invalid." });
+    }
+
+    const updateData: Record<string, string | null> = {};
+    if (username !== undefined) updateData.username = username.trim();
+    if (avatar_url !== undefined) updateData.avatar_url = avatar_url.trim() || null;
+
+    const { data, error } = await supabaseAdmin
+        .from('profiles')
+        .update(updateData)
+        .eq('id', userId)
+        .select()
+        .single();
+
+    if (error) return res.status(500).json({ error: error.message });
+    if (!data) return res.status(404).json({ error: "Profile not found" });
+
+    return res.status(200).json({ message: "Profile updated", profile: data });
+};
+
 // GET /profile - Fetch account details
 export const getMyProfile = async(req:AuthRequest, res:Response) => {
     const userId = req.user.id;
