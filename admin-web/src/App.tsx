@@ -8,16 +8,13 @@ import { ConflictDetailDrawer } from './components/conflicts/conflict-detail-dra
 import { ConflictOutcomeForm } from './components/conflicts/conflict-outcome-form';
 import { OperationsOverviewPage } from './pages/analytics/operations-overview-page';
 import { ConflictOutcomesPage } from './pages/analytics/conflict-outcomes-page';
-import { Button } from './components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './components/ui/card';
-import { Input } from './components/ui/input';
+import { LoginForm } from './components/auth/login-form';
+import { useAdminAuth } from './context/AdminAuthContext';
 import {
   ApiError,
   apiGet,
   apiPost,
   getApiBaseUrl,
-  getStoredAdminToken,
-  setStoredAdminToken,
 } from './lib/http';
 
 type MarketRow = {
@@ -74,23 +71,22 @@ const EMPTY_CONFLICT_METRICS: ConflictAnalyticsResponse['data'] = {
 };
 
 const App = () => {
-  const [tokenInput, setTokenInput] = useState(getStoredAdminToken());
+  const { isAuthed, isLoading, login, logout, user } = useAdminAuth();
+  const [loginError, setLoginError] = useState<string | null>(null);
   const [pending, setPending] = useState<MarketRow[]>([]);
   const [due, setDue] = useState<MarketRow[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [statusNotice, setStatusNotice] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isQueueLoading, setIsQueueLoading] = useState(false);
   const [conflicts, setConflicts] = useState<ConflictRow[]>([]);
   const [selectedConflict, setSelectedConflict] = useState<ConflictRow | null>(null);
   const [opsMetrics, setOpsMetrics] = useState<OperationsAnalyticsResponse['data']>(EMPTY_OPS_METRICS);
   const [conflictMetrics, setConflictMetrics] = useState<ConflictAnalyticsResponse['data']>(EMPTY_CONFLICT_METRICS);
 
-  const isAuthed = Boolean(getStoredAdminToken());
-
   const normalizeErrorMessage = (err: unknown, fallback: string) => {
     if (err instanceof ApiError) {
       if (err.status === 401 || err.status === 403) {
-        return 'Unauthorized. Save a valid admin token to access protected admin endpoints.';
+        return 'Unauthorized. Please sign in with valid admin credentials.';
       }
 
       return `${err.message} (HTTP ${err.status})`;
@@ -104,9 +100,7 @@ const App = () => {
   };
 
   const loadQueues = async () => {
-    const token = getStoredAdminToken();
-    if (!token) {
-      setError('No admin token found. Paste a token below and click Save token.');
+    if (!isAuthed) {
       setPending([]);
       setDue([]);
       setConflicts([]);
@@ -116,7 +110,7 @@ const App = () => {
     }
 
     try {
-      setIsLoading(true);
+      setIsQueueLoading(true);
       setError(null);
       const [pendingRes, dueRes] = await Promise.all([
         apiGet<QueueResponse>('/admin/markets/pending'),
@@ -134,13 +128,32 @@ const App = () => {
     } catch (err) {
       setError(normalizeErrorMessage(err, 'Failed to load queues'));
     } finally {
-      setIsLoading(false);
+      setIsQueueLoading(false);
     }
   };
 
   useEffect(() => {
     void loadQueues();
-  }, []);
+  }, [isAuthed]);
+
+  const handleLogin = async (email: string, password: string) => {
+    setLoginError(null);
+    try {
+      await login(email, password);
+    } catch (err) {
+      setLoginError(normalizeErrorMessage(err, 'Login failed. Please check your credentials.'));
+    }
+  };
+
+  const handleLogout = () => {
+    logout();
+    setPending([]);
+    setDue([]);
+    setConflicts([]);
+    setOpsMetrics(EMPTY_OPS_METRICS);
+    setConflictMetrics(EMPTY_CONFLICT_METRICS);
+    setSelectedConflict(null);
+  };
 
   const review = async (marketId: number, action: 'approve' | 'reject') => {
     try {
@@ -182,27 +195,20 @@ const App = () => {
     }
   };
 
-  const saveToken = async () => {
-    setStoredAdminToken(tokenInput);
-    setStatusNotice('Admin token saved. Refreshing queues...');
-    await loadQueues();
-  };
+  if (isLoading) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
+        <div className="card card--loading">Loading...</div>
+      </div>
+    );
+  }
 
-  const clearToken = () => {
-    setStoredAdminToken('');
-    setTokenInput('');
-    setStatusNotice('Admin token cleared.');
-    setError('No admin token found. Paste a token below and click Save token.');
-    setPending([]);
-    setDue([]);
-    setConflicts([]);
-    setOpsMetrics(EMPTY_OPS_METRICS);
-    setConflictMetrics(EMPTY_CONFLICT_METRICS);
-    setSelectedConflict(null);
-  };
+  if (!isAuthed) {
+    return <LoginForm onLogin={handleLogin} isLoading={isLoading} error={loginError} />;
+  }
 
   return (
-    <AdminShell>
+    <AdminShell user={user} onLogout={handleLogout}>
       <div className="grid">
         <ReactBitsHero
           pendingCount={opsMetrics.pending_count}
@@ -210,44 +216,12 @@ const App = () => {
           openConflicts={conflictMetrics.open_conflicts}
         />
 
-        <Card className="toolbar">
-          <CardHeader>
-            <CardTitle className="toolbar-title">Admin Access</CardTitle>
-            <CardDescription className="toolbar-copy">API Base: {getApiBaseUrl()}</CardDescription>
-          </CardHeader>
-          <CardContent className="toolbar-actions">
-            <Input
-              type="password"
-              value={tokenInput}
-              onChange={(event) => setTokenInput(event.target.value)}
-              placeholder="Paste admin bearer token"
-            />
-            <Button variant="default" onClick={() => void saveToken()}>
-              Save token
-            </Button>
-            <Button variant="secondary" onClick={clearToken}>
-              Clear
-            </Button>
-            <Button variant="ghost" onClick={() => void loadQueues()}>
-              Refresh
-            </Button>
-          </CardContent>
-        </Card>
+        <div style={{ fontSize: 12, color: 'var(--muted, #888)', padding: '4px 0' }}>API Base: {getApiBaseUrl()}</div>
 
         {statusNotice ? <div className="card card--ok">{statusNotice}</div> : null}
         {error ? <div className="card card--error">Error: {error}</div> : null}
 
-        {isLoading ? <div className="card card--loading">Loading admin queues...</div> : null}
-
-        {!isAuthed ? (
-          <section className="card onboarding-note">
-            <h3>Getting started</h3>
-            <p>
-              This dashboard calls protected admin endpoints. Add a valid admin bearer token above to unlock moderation
-              queues and analytics.
-            </p>
-          </section>
-        ) : null}
+        {isQueueLoading ? <div className="card card--loading">Loading admin queues...</div> : null}
 
         <section id="operations" className="grid section-group">
           <h2 className="section-title">Operations Queue</h2>
