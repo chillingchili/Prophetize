@@ -15,6 +15,7 @@ import CategoryCard from '@/components/explore/category-card';
 import PredictionCard from '@/components/explore/prediction-card';
 import { EmptyState } from '@/components/common/empty-state';
 import { ExploreTheme } from '../../constants/explore-theme';
+import { UI_COLORS } from '@/constants/ui-tokens';
 import { useNotificationBadge } from '../../context/NotificationBadgeContext';
 
 // ─── Category display config ────────────────────────────────────────────────
@@ -137,11 +138,11 @@ export default function ExploreScreen() {
 
     return (
         <View className="flex-1" style={{ backgroundColor: ExploreTheme.pageBg }}>
-            {/* ── Sticky white header ── */}
-            <SafeAreaView edges={['top']} className="bg-white">
+            <SafeAreaView edges={['top']} style={{ backgroundColor: UI_COLORS.surface }}>
                 <View
-                    className="px-5 bg-white"
+                    className="px-5"
                     style={{
+                        backgroundColor: UI_COLORS.surface,
                         borderBottomWidth: 1,
                         borderBottomColor: ExploreTheme.headerBorder,
                         paddingVertical: 14,

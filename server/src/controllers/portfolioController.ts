@@ -3,6 +3,7 @@
 // ============================================================
 
 import { Response } from 'express';
+import { supabase } from '../config/supabaseClient';
 import { AuthRequest } from '../types/authRequest';
 import {
   getPortfolioSummary,
@@ -117,6 +118,29 @@ export const getMarketPositionByMarketId = async (req: AuthRequest, res: Respons
 
     const snapshot = await getMarketPosition(userId, String(marketId));
 
+    // Compute P&L for resolved markets
+    let realizedPL: number | null = null;
+    const { data: marketData } = await supabase
+      .from('markets')
+      .select('status, resolved_option_id')
+      .eq('id', marketId)
+      .maybeSingle();
+
+    if (marketData && marketData.status === 'finalized' && marketData.resolved_option_id !== null) {
+      const winningOptionId = Number(marketData.resolved_option_id);
+      realizedPL = 0;
+      for (const opt of snapshot.options) {
+        const shares = opt.shares_owned;
+        const avgEntry = opt.avg_entry_price;
+        const isWinner = Number(opt.option_id) === winningOptionId;
+        if (isWinner) {
+          realizedPL += shares * (1 - avgEntry);
+        } else {
+          realizedPL -= shares * avgEntry;
+        }
+      }
+    }
+
     // Fallback path: if direct aggregation returns zero but active positions exist,
     // derive total from enriched positions query to avoid false zeros.
     if (snapshot.total_shares <= 0) {
@@ -135,11 +159,12 @@ export const getMarketPositionByMarketId = async (req: AuthRequest, res: Respons
             total_shares: totalShares,
             updated_at: latestUpdatedAt,
           },
+          realized_pl: realizedPL,
         });
       }
     }
 
-    return res.status(200).json({ data: snapshot });
+    return res.status(200).json({ data: snapshot, realized_pl: realizedPL });
   } catch (error: any) {
     return res.status(500).json({ error: error.message });
   }

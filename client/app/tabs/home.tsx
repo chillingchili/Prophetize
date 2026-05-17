@@ -12,6 +12,7 @@ import CategoryBtn from "@/components/home/category-btn";
 import HomeHeader from "@/components/home/home-header";
 import ClaimAllowance from "@/components/home/claim-allowance";
 import HomeListSkeleton from '@/components/home/home-list-skeleton';
+import Fab from '@/components/common/fab';
 import { useUserStore } from '../../context/useUserStore';
 import { PortfolioUpdatedPayload, subscribeRealtime } from '../../context/realtimeClient';
 import { useNotificationBadge } from '../../context/NotificationBadgeContext';
@@ -122,11 +123,11 @@ export default function HomeScreen() {
 
     return (
         <View className="flex-1" style={{ backgroundColor: ExploreTheme.pageBg }}>
-            {/* White header zone — includes status bar */}
-            <SafeAreaView edges={['top']} className="bg-white">
+            <SafeAreaView edges={['top']} style={{ backgroundColor: UI_COLORS.surface }}>
                 <View
-                    className="px-5 bg-white"
+                    className="px-5"
                     style={{
+                        backgroundColor: UI_COLORS.surface,
                         borderBottomWidth: 1,
                         borderBottomColor: ExploreTheme.headerBorder,
                         paddingVertical: 14,
@@ -135,7 +136,6 @@ export default function HomeScreen() {
                     <HomeHeader
                         balance={userData?.balance ?? 0}
                         unreadCount={unreadCount}
-                        onCreatePress={openCreateMarket}
                         onNotificationPress={() => router.push('/notifications')}
                     />
                     <Text className="font-jetbrain text-[11px] mt-2" style={{ color: realtimeStatus.color }}>
@@ -195,12 +195,13 @@ export default function HomeScreen() {
                                 />
                             )}
                             showsVerticalScrollIndicator={false}
-                            contentContainerStyle={{ gap: 14, paddingBottom: tabBarHeight + 16 }}
+                            contentContainerStyle={{ gap: 14, paddingBottom: tabBarHeight + 100 }}
                         />       
                     )
                 )}
             </View>
 
+            <Fab onPress={openCreateMarket} style={{ bottom: tabBarHeight + 28, right: 16 }} />
         </View>
     );
 }

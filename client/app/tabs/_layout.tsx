@@ -1,17 +1,16 @@
 import { Redirect, Tabs, useRouter } from 'expo-router';
 import React, { useEffect } from 'react';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import Feather from '@expo/vector-icons/Feather';
 import { useAuth } from '../../context/AuthContext';
 import { useUserStore } from "../../context/useUserStore";
-import { UI_COLORS } from '@/constants/ui-tokens';
+import { useTheme } from '@/context/ThemeContext';
+import { FloatingTabBar } from '@/components/common/floating-tab-bar';
 
 
 export default function TabsLayout(){
   const { token, isLoading } = useAuth();
   const router = useRouter();
   const { fetchUserData } = useUserStore();
+  const { colorScheme } = useTheme();
 
   useEffect(() => {
     if (isLoading) return;
@@ -29,39 +28,11 @@ export default function TabsLayout(){
     if (!token) return null;
 
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: UI_COLORS.accent }}>
-        <Tabs.Screen name="home" options={{ 
-            title: 'Home', 
-            headerShown: false, 
-            tabBarIcon: ({color, size}) => {
-                return <MaterialIcons name="home-filled" size={size} color={color} />
-            }   
-        }} />
-        <Tabs.Screen name="explore" options={{ 
-            title: 'Explore', 
-            headerShown: false, 
-            tabBarIcon: ({color, size}) => {
-                return <Ionicons name="search" size={size} color={color} />
-            }   
-        }} />
-        <Tabs.Screen name="leaderboard" options={{ 
-            title: 'Leaderboard', 
-            headerShown: false, 
-            tabBarIcon: ({color, size}) => {
-                return <MaterialIcons name="leaderboard" size={size} color={color} />
-            }   
-        }} />
-        <Tabs.Screen name="profile" options={{ 
-            title: 'Profile', 
-            headerShown: false, 
-            tabBarIcon: ({color, size}) => {
-                return <Feather name="user" size={size} color={color} />
-            }   
-        }} />
-        {/* <Tabs.Screen name="marketDetails" options={{
-            href:null,
-            headerShown:false,
-        }} /> */}
+    <Tabs key={colorScheme} tabBar={(props) => <FloatingTabBar key={`tab-bar-${colorScheme}`} {...props} />}>
+        <Tabs.Screen name="home" options={{ title: 'Home', headerShown: false }} />
+        <Tabs.Screen name="explore" options={{ title: 'Explore', headerShown: false }} />
+        <Tabs.Screen name="leaderboard" options={{ title: 'Leaderboard', headerShown: false }} />
+        <Tabs.Screen name="profile" options={{ title: 'Profile', headerShown: false }} />
     </Tabs>
   );
 }

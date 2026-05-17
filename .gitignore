@@ -22,3 +22,6 @@ client/constants/backendUrl.ts
 .planning/STATE.md
 .docs
 .planning
+graphify-out
+m3-demo.html
+market-details-m3.html

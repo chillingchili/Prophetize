@@ -330,16 +330,16 @@ export async function getMarketPosition(
 
   const { data: positionsData, error: positionsError } = await supabaseAdmin
     .from('user_positions')
-    .select('market_option_id, shares_owned, updated_at')
+    .select('market_option_id, shares_owned, avg_entry_price, updated_at')
     .eq('user_id', userId)
     .in('market_option_id', optionIds);
 
   if (positionsError) throw new Error(positionsError.message);
 
-  const optionTotals = new Map<string, { option_name: string; shares_owned: number }>();
+  const optionTotals = new Map<string, { option_name: string; shares_owned: number; total_cost: number }>();
   let latestUpdatedAt: string | null = null;
 
-  for (const row of (positionsData || []) as Array<{ market_option_id: number | string; shares_owned: number | string; updated_at: string | null }>) {
+  for (const row of (positionsData || []) as Array<{ market_option_id: number | string; shares_owned: number | string; avg_entry_price: number | string; updated_at: string | null }>) {
     const optionId = String(row.market_option_id ?? '');
     if (!optionId) {
       continue;
@@ -347,12 +347,15 @@ export async function getMarketPosition(
 
     const optionName = optionNameById.get(optionId) ?? 'Unknown';
     const sharesOwned = Number(row.shares_owned ?? 0);
+    const avgPrice = Number(row.avg_entry_price ?? 0);
     const safeShares = Number.isFinite(sharesOwned) ? sharesOwned : 0;
+    const safePrice = Number.isFinite(avgPrice) ? avgPrice : 0;
     const existing = optionTotals.get(optionId);
 
     optionTotals.set(optionId, {
       option_name: optionName,
       shares_owned: (existing?.shares_owned ?? 0) + safeShares,
+      total_cost: (existing?.total_cost ?? 0) + (safeShares * safePrice),
     });
 
     const updatedAt = typeof row.updated_at === 'string' ? row.updated_at : null;
@@ -365,6 +368,7 @@ export async function getMarketPosition(
     option_id,
     option_name: value.option_name,
     shares_owned: value.shares_owned,
+    avg_entry_price: value.shares_owned > 0 ? value.total_cost / value.shares_owned : 0,
   }));
 
   const totalShares = options.reduce((sum, option) => sum + option.shares_owned, 0);

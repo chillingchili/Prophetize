@@ -188,10 +188,11 @@ export default function LeaderboardScreen() {
 
     return (
         <View className="flex-1" style={{ backgroundColor: ExploreTheme.pageBg }}>
-            <SafeAreaView edges={['top']} className="bg-white">
+            <SafeAreaView edges={['top']} style={{ backgroundColor: UI_COLORS.surface }}>
                 <View
-                    className="px-5 bg-white"
+                    className="px-5"
                     style={{
+                        backgroundColor: UI_COLORS.surface,
                         borderBottomWidth: 1,
                         borderBottomColor: ExploreTheme.headerBorder,
                         paddingVertical: 14,
@@ -274,7 +275,7 @@ export default function LeaderboardScreen() {
                             onEndReached={handleLoadMore}
                             onEndReachedThreshold={0.4}
                             showsVerticalScrollIndicator={false}
-                            contentContainerStyle={{ gap: 8, paddingBottom: 104 }}
+                            contentContainerStyle={{ gap: 8, paddingBottom: 130 }}
                             ListFooterComponent={
                                 isFetchingMore ? <LeaderboardSkeletonList count={2} compact /> : null
                             }
@@ -288,7 +289,7 @@ export default function LeaderboardScreen() {
                             position: 'absolute',
                             left: 20,
                             right: 20,
-                            bottom: 6,
+                            bottom: 90,
                         }}
                     >
                         <LeaderboardMyPositionCard item={myPosition} />

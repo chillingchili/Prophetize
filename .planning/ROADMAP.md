@@ -219,3 +219,15 @@ Plans:
 Plans:
 - [ ] 11-01-PLAN.md — Build admin auth context with token persistence and HTTP client 401 recovery
 - [ ] 11-02-PLAN.md — Create login form, wire auth into App.tsx, and add sidebar logout
+
+### Phase 12: Add notification flow and function to the app
+
+**Goal:** Complete the end-to-end notification pipeline: market resolution events automatically create notifications, stored in a DB table, delivered via WebSocket push + polling, displayed in the notification inbox with unread badge tracking.
+
+**Requirements:** [NOT-01, NOT-02, NOT-03, NOT-04, NOT-05, NOT-06, NOT-07, NOT-08]
+**Depends on:** Phase 11
+**Plans:** 2 plans
+
+Plans:
+- [ ] 12-01-PLAN.md — Backend notification infrastructure (DB, API, resolution hook, WebSocket)
+- [ ] 12-02-PLAN.md — Client notification UX (badge context, inbox wiring, header badge)

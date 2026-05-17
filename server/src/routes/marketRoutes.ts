@@ -13,6 +13,7 @@ router.get("/trending", marketController.getTrendingMarkets);
 router.get("/categories", marketController.getCategories);
 router.get("/category/:category", marketController.getMarketByCategory);
 router.get("/search", marketController.searchMarket);
+router.get('/resolved', marketController.getResolvedMarkets);
 router.get('/created', requireAuth, marketController.getCreatedMarkets);
 router.get('/created/user/:userId', requireAuth, marketController.getCreatedMarkets);
 router.get("/:id/history", marketController.getMarketHistory);

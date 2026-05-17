@@ -38,7 +38,7 @@ function CategoryRow({
             style={{
                 flexDirection: 'row',
                 alignItems: 'center',
-                backgroundColor: 'white',
+                backgroundColor: UI_COLORS.surface,
                 borderRadius: 14,
                 borderWidth: 1,
                 borderColor: ExploreTheme.headerBorder,

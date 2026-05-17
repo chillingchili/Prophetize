@@ -113,7 +113,16 @@ export interface AppTheme {
       shadowRadius: number;
       elevation: number;
     };
+    fab: {
+      shadowColor: string;
+      shadowOffset: { width: number; height: number };
+      shadowOpacity: number;
+      shadowRadius: number;
+      elevation: number;
+    };
   };
+  primaryContainer: string;
+  onPrimaryContainer: string;
 }
 
 export const AppThemeLight: AppTheme = {
@@ -223,7 +232,16 @@ export const AppThemeLight: AppTheme = {
       shadowRadius: 10,
       elevation: 4,
     },
+    fab: {
+      shadowColor: '#0F172A',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.12,
+      shadowRadius: 8,
+      elevation: 3,
+    },
   },
+  primaryContainer: '#A6F1FF',
+  onPrimaryContainer: '#002028',
 };
 
 export const AppThemeDark: AppTheme = {
@@ -333,5 +351,14 @@ export const AppThemeDark: AppTheme = {
       shadowRadius: 12,
       elevation: 4,
     },
+    fab: {
+      shadowColor: '#000000',
+      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity: 0.35,
+      shadowRadius: 10,
+      elevation: 3,
+    },
   },
+  primaryContainer: '#004D5C',
+  onPrimaryContainer: '#A6F1FF',
 };

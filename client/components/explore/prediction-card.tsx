@@ -81,7 +81,7 @@ export default function PredictionCard({prediction, onPress, index = 0}:Props) {
       accessibilityRole="button"
       accessibilityHint="Opens market details"
     >
-      <View className="bg-white rounded-2xl overflow-hidden">
+      <View className="rounded-2xl overflow-hidden" style={{ backgroundColor: UI_COLORS.surface }}>
 
         {/* Image with diagonal gradient fade: top-right visible -> bottom-left hidden */}
         {prediction.image ? (
@@ -92,7 +92,7 @@ export default function PredictionCard({prediction, onPress, index = 0}:Props) {
               resizeMode="cover"
             />
             <LinearGradient
-              colors={['transparent', 'white']}
+              colors={['transparent', UI_COLORS.surface]}
               start={{ x: 1, y: 0 }}
               end={{ x: 0, y: 1 }}
               style={StyleSheet.absoluteFillObject}
@@ -161,9 +161,8 @@ export default function PredictionCard({prediction, onPress, index = 0}:Props) {
 
           {/* Brief Summary and Volume*/}
           <View className="flex-row mt-4">
-            <Text className="font-jetbrain text-sm">Sample</Text>
-            <View className="flex-1"/>
-            <Text className="font-jetbrain text-xs">Vol: <Text className="font-jetbrain-bold">{((prediction.total_volume ?? ((prediction as Prediction & { volume?: number }).volume ?? 0))).toLocaleString()}</Text></Text>
+            <Text className="font-jetbrain text-sm flex-1" numberOfLines={1} ellipsizeMode="tail" style={{ color: UI_COLORS.textSecondary }}>{prediction.description}</Text>
+            <Text className="font-jetbrain text-xs" style={{ color: UI_COLORS.textSecondary }}>Vol: <Text className="font-jetbrain-bold" style={{ color: UI_COLORS.textPrimary }}>{((prediction.total_volume ?? ((prediction as Prediction & { volume?: number }).volume ?? 0))).toLocaleString()}</Text></Text>
           </View>
 
         </View>

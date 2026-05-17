@@ -1,5 +1,17 @@
-export const UI_COLORS = {
-  pageBg: '#F4FBFE',
+import { AppThemeLight, AppThemeDark } from './app-theme';
+import React from 'react';
+
+type Theme = 'light' | 'dark';
+let activeTheme: Theme = 'light';
+const listeners = new Set<() => void>();
+
+export function _setTheme(theme: Theme) {
+  activeTheme = theme;
+  listeners.forEach(fn => fn());
+}
+
+const lightTheme = {
+  pageBg: '#F4F5F7',
   surface: '#FFFFFF',
   surfaceMuted: '#EAF6FB',
   surfaceSoft: '#F3FAFD',
@@ -7,8 +19,8 @@ export const UI_COLORS = {
   borderSoft: '#E1F1F6',
   borderMuted: '#DDEDF4',
   textPrimary: '#0B1F2A',
-  textSecondary: '#475569',  
-  textMuted: '#64748B',    
+  textSecondary: '#475569',
+  textMuted: '#64748B',
   link: '#2BB5D6',
   linkPressed: '#1F9CB9',
   accent: '#2BB5D6',
@@ -22,6 +34,12 @@ export const UI_COLORS = {
   hint: '#B45309',
   hintBg: '#FFFBEB',
   hintBorder: '#FDE68A',
+  outcomeYes: '#059669',
+  outcomeYesSoft: 'rgba(5, 150, 105, 0.12)',
+  outcomeNo: '#DC2626',
+  outcomeNoSoft: 'rgba(220, 38, 38, 0.12)',
+  primaryContainer: '#A6F1FF',
+  onPrimaryContainer: '#002028',
   createMarket: {
     cardBg: '#FFFFFF',
     cardBorder: '#DDEDF4',
@@ -81,7 +99,106 @@ export const UI_COLORS = {
       value: '#D9F2E5',
     },
   },
+  profileStat: {
+    netWorthBg: '#DDF8FF',
+    netWorthBorder: '#89DEEF',
+    netWorthLabel: '#146A82',
+    balanceBg: '#EEF6FA',
+    balanceBorder: '#D0E5EE',
+    biggestWinBg: '#FDF3E0',
+    biggestWinBorder: '#F5D59A',
+    biggestWinLabel: '#8A5B00',
+    biggestWinValue: '#553600',
+    logoutBorder: '#FECACA',
+    statusActiveBg: '#DFF7FE',
+    statusActiveBorder: '#82DAEF',
+    statusActiveText: '#007FA2',
+    statusPendingBg: '#FFF5D9',
+    statusPendingBorder: '#F7D27B',
+    statusPendingText: '#8A5B00',
+    statusRejectedBg: '#FEE2E2',
+    statusRejectedBorder: '#FCA5A5',
+    statusFinalizedBg: '#E7F8F0',
+    statusFinalizedBorder: '#A5E2C2',
+  },
 };
+
+const darkTheme: typeof lightTheme = {
+  pageBg: AppThemeDark.pageBg,
+  surface: AppThemeDark.surface,
+  surfaceMuted: AppThemeDark.surfaceMuted,
+  surfaceSoft: AppThemeDark.surfaceSoft,
+  border: AppThemeDark.border,
+  borderSoft: AppThemeDark.borderSoft,
+  borderMuted: AppThemeDark.borderMuted,
+  textPrimary: AppThemeDark.textPrimary,
+  textSecondary: AppThemeDark.textSecondary,
+  textMuted: AppThemeDark.textMuted,
+  link: AppThemeDark.link,
+  linkPressed: AppThemeDark.linkPressed,
+  accent: AppThemeDark.accent,
+  accentPressed: AppThemeDark.accentPressed,
+  accentSoft: AppThemeDark.accentSoft,
+  accentBorder: AppThemeDark.accentBorder,
+  info: AppThemeDark.info,
+  warning: AppThemeDark.warning,
+  success: AppThemeDark.success,
+  danger: AppThemeDark.danger,
+  hint: AppThemeDark.hint,
+  hintBg: AppThemeDark.hintBg,
+  hintBorder: AppThemeDark.hintBorder,
+  outcomeYes: AppThemeDark.outcomeYes,
+  outcomeYesSoft: AppThemeDark.outcomeYesSoft,
+  outcomeNo: AppThemeDark.outcomeNo,
+  outcomeNoSoft: AppThemeDark.outcomeNoSoft,
+  primaryContainer: AppThemeDark.primaryContainer,
+  onPrimaryContainer: AppThemeDark.onPrimaryContainer,
+  createMarket: AppThemeDark.createMarket,
+  leaderboard: AppThemeDark.leaderboard,
+  profileStat: {
+    netWorthBg: '#0D2A33',
+    netWorthBorder: '#1A5C6E',
+    netWorthLabel: '#7AD9ED',
+    balanceBg: '#1A2028',
+    balanceBorder: '#2A3441',
+    biggestWinBg: '#2A1F0B',
+    biggestWinBorder: '#713F12',
+    biggestWinLabel: '#FBBF24',
+    biggestWinValue: '#FDE68A',
+    logoutBorder: '#7F1D1D',
+    statusActiveBg: '#0D2A33',
+    statusActiveBorder: '#1A5C6E',
+    statusActiveText: '#7AD9ED',
+    statusPendingBg: '#2A1F0B',
+    statusPendingBorder: '#713F12',
+    statusPendingText: '#FBBF24',
+    statusRejectedBg: '#2A0B0B',
+    statusRejectedBorder: '#7F1D1D',
+    statusFinalizedBg: '#0B2A1A',
+    statusFinalizedBorder: '#1A5C3A',
+  },
+};
+
+function currentColors(): typeof lightTheme {
+  return activeTheme === 'dark' ? darkTheme : lightTheme;
+}
+
+export const UI_COLORS = new Proxy<typeof lightTheme>({} as typeof lightTheme, {
+  get(_target, key: string) {
+    const colors = currentColors();
+    return (colors as Record<string, unknown>)[key];
+  },
+});
+
+export function useUITheme(): typeof UI_COLORS {
+  const [, forceUpdate] = React.useState(0);
+  React.useEffect(() => {
+    const fn = () => forceUpdate(n => n + 1);
+    listeners.add(fn);
+    return () => { listeners.delete(fn); };
+  }, []);
+  return UI_COLORS;
+}
 
 export const UI_TYPE_SCALE = {
   leaderboard: {
@@ -116,6 +233,13 @@ export const UI_SHADOWS = {
     shadowOpacity: 0.12,
     shadowRadius: 10,
     elevation: 4,
+  },
+  fab: {
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 3,
   },
 };
 

@@ -137,10 +137,11 @@ export default function NotificationsScreen() {
 
   return (
     <View className="flex-1" style={{ backgroundColor: ExploreTheme.pageBg }}>
-      <SafeAreaView edges={['top']} className="bg-white">
+      <SafeAreaView edges={['top']} style={{ backgroundColor: UI_COLORS.surface }}>
         <View
-          className="px-5 bg-white"
+          className="px-5"
           style={{
+            backgroundColor: UI_COLORS.surface,
             borderBottomWidth: 1,
             borderBottomColor: ExploreTheme.headerBorder,
             paddingVertical: 14,

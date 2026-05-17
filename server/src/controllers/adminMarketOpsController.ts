@@ -49,7 +49,7 @@ export const getPendingApprovals = async (_req: AuthRequest, res: Response) => {
 export const getDueResolutions = async (_req: AuthRequest, res: Response) => {
   try {
     const nowIso = new Date().toISOString();
-    const { data, error } = await supabase
+    const { data: markets, error } = await supabase
       .from('markets')
       .select('id, title, category, status, end_date')
       .in('status', ['active', 'resolving'])
@@ -61,7 +61,33 @@ export const getDueResolutions = async (_req: AuthRequest, res: Response) => {
       throw error;
     }
 
-    return res.status(200).json({ data: data || [] });
+    const ids = (markets || []).map((m) => m.id);
+    const optionsMap: Record<number, Array<{ id: number; name: string }>> = {};
+
+    if (ids.length > 0) {
+      const { data: options, error: optError } = await supabase
+        .from('market_options')
+        .select('id, name, market_id')
+        .in('market_id', ids);
+
+      if (!optError && options) {
+        for (const opt of options as Array<{ id: number; name: string; market_id: number }>) {
+          const bucket = optionsMap[opt.market_id];
+          if (!bucket) {
+            optionsMap[opt.market_id] = [{ id: opt.id, name: opt.name }];
+          } else {
+            bucket.push({ id: opt.id, name: opt.name });
+          }
+        }
+      }
+    }
+
+    const enriched = (markets || []).map((m) => ({
+      ...m,
+      options: optionsMap[m.id] || [],
+    }));
+
+    return res.status(200).json({ data: enriched });
   } catch (error) {
     console.error('getDueResolutions failed', error);
     return res.status(500).json({ error: INTERNAL_SERVER_ERROR_MESSAGE });
@@ -173,6 +199,17 @@ export const resolveMarket = async (req: AuthRequest, res: Response) => {
     } else {
       data = fullPatchResult.data;
     }
+
+    // Distribute winnings to winning users
+    (async () => {
+      const { error: payoutError } = await supabaseAdmin.rpc('handle_market_resolution', {
+        p_market_id: marketId,
+        p_resolved_option_id: resolvedOptionId,
+      });
+      if (payoutError) {
+        console.error('handle_market_resolution RPC failed:', payoutError);
+      }
+    })();
 
     // Create resolution notifications asynchronously (non-blocking side effect)
     (async () => {

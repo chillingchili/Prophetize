@@ -4,7 +4,7 @@ import { SpaceGrotesk_700Bold, SpaceGrotesk_400Regular } from '@expo-google-font
 import { InterTight_400Regular, InterTight_700Bold } from '@expo-google-fonts/inter-tight';
 import { JetBrainsMono_400Regular, JetBrainsMono_700Bold } from '@expo-google-fonts/jetbrains-mono';
 import { usePathname, useRootNavigationState, useRouter, Stack } from 'expo-router';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Platform } from 'react-native';
 import { AuthProvider, useAuth } from '../context/AuthContext';
 import { ThemeProvider, useTheme } from '@/context/ThemeContext';
@@ -29,6 +29,7 @@ function RootLayout() {
   const rootNavState = useRootNavigationState();
   const { token, isLoading } = useAuth();
   const { colorScheme } = useTheme();
+  const navTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if(isLoading) return;
@@ -38,12 +39,19 @@ function RootLayout() {
       router.replace('/');
       return;
     }
-    // Only auto-forward authenticated users from the landing page.
-    // Keep /login and /signUp reachable to avoid unexpected route jumps.
-    if(token && pathname === '/'){
-      router.replace('/tabs/home');
+    if(token && pathname === '/' && !navTimer.current){
+      navTimer.current = setTimeout(() => {
+        navTimer.current = null;
+        router.replace('/tabs/home');
+      }, 0);
     }
-  }, [token, isLoading, pathname, router, rootNavState?.key]);
+    return () => {
+      if(navTimer.current){
+        clearTimeout(navTimer.current);
+        navTimer.current = null;
+      }
+    };
+  }, [token, isLoading, pathname]);
 
   useEffect(() => {
     if (!token) {
@@ -75,7 +83,7 @@ function RootLayout() {
 
   return (
     <NotificationBadgeProvider key={colorScheme}>
-      <Stack>
+      <Stack key={colorScheme}>
         <Stack.Screen name="index" options={{ title: 'Prophetize', headerShown: false }} />
         <Stack.Screen name="login" options={{ title: 'Login', headerShown: false }} />
         <Stack.Screen name="signUp" options={{ title: 'signUp', headerShown: false }} />

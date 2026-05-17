@@ -296,6 +296,75 @@ export const getMarketByCategory = async(req:Request, res:Response) => {
     }
 };
 
+// GET /resolved - Get resolved markets
+export const getResolvedMarkets = async(req:Request, res:Response) => {
+    const page = parseInt(req.query.page as string) || 0;
+    const limit = parseInt(req.query.limit as string) || 10;
+
+    const { from, to } = getPaginationRange(page, limit);
+
+    try {
+        const { data, error } = await supabase
+            .from('markets')
+            .select(`
+                *,
+                option: market_options!market_options_market_id_fkey(
+                    id,
+                    name,
+                    probability
+                )
+            `)
+            .eq('status', 'finalized')
+            .order('resolved_at', { ascending: false })
+            .range(from, to);
+
+        if(error) throw error;
+        if(!data || !data.length) return res.status(200).json([]);
+
+        const marketData = data.map((item:any) => {
+            const rawOptions = item.option || [];
+            const sortedOptions = rawOptions.sort((a:any, b:any) => b.probability - a.probability);
+            const topOptions = sortedOptions.slice(0, 2);
+
+            const otherOptions = sortedOptions.slice(2);
+            const otherProbability = otherOptions.reduce((sum:number, opt:any) => sum + opt.probability, 0);
+
+            const finalOptions = [...topOptions];
+            if(otherProbability > 0.01){
+                finalOptions.push({
+                    id: 'other',
+                    name: 'other',
+                    probability: otherProbability
+                });
+            }
+
+            return {
+                id: item.id,
+                title: item.title,
+                image: item.image_url,
+                image_url: item.image_url,
+                category: item.category,
+                endDate: item.end_date,
+                end_date: item.end_date,
+                status: item.status,
+                total_volume: Number(item.total_volume) || 0,
+                volume: Number(item.total_volume) || 0,
+                options: finalOptions,
+                resolved_option_id: item.resolved_option_id,
+                resolution_evidence_url: item.resolution_evidence_url,
+                resolution_note: item.resolution_note,
+                resolved_at: item.resolved_at,
+                description: item.description,
+            }
+        });
+
+        return res.status(200).json( marketData );
+    } catch(error:any){
+        console.error('getResolvedMarkets failed', error);
+        res.status(500).json({ error: INTERNAL_SERVER_ERROR_MESSAGE });
+    }
+};
+
 // GET /:id - Get market by ID
 export const getMarketById = async(req:Request, res:Response) => {
     try {

@@ -3,6 +3,7 @@ import { Pressable, Text, View } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { categoryIconMap } from '@/constants/ui-mappings';
 import { ExploreTheme } from '@/constants/explore-theme';
+import { UI_COLORS } from '@/constants/ui-tokens';
 
 export type CategoryKey = 'SPORTS' | 'POLITICS' | 'CRYPTO' | 'CULTURE' | 'TECHNOLOGY' | 'SCHOOL';
 
@@ -31,7 +32,7 @@ export default function CategoryCard({ categoryKey, label, count, onPress }: Pro
                 minHeight: 96,
                 borderWidth: 1,
                 borderColor: ExploreTheme.headerBorder,
-                backgroundColor: 'white',
+                backgroundColor: UI_COLORS.surface,
             }}
         >
             <View className="flex-1 px-4 pt-4 pb-5 gap-3">

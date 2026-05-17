@@ -2,11 +2,18 @@ import React, { useState } from 'react';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Input } from '../ui/input';
+import { Select } from '../ui/select';
+
+type MarketOption = {
+  id: number;
+  name: string;
+};
 
 type DueMarket = {
   id: number;
   title: string;
   end_date?: string;
+  options?: MarketOption[];
 };
 
 type ResolvePayload = {
@@ -56,8 +63,9 @@ export const DueResolutionTable = ({ rows, onResolve }: Props) => {
             </tr>
           ) : (
             rows.map((row) => {
+              const options = row.options || [];
               const draft = drafts[row.id] ?? {
-                resolved_option_id: 1,
+                resolved_option_id: options[0]?.id ?? 1,
                 resolution_evidence_url: '',
                 resolution_note: '',
               };
@@ -67,11 +75,20 @@ export const DueResolutionTable = ({ rows, onResolve }: Props) => {
                   <td>{row.title}</td>
                   <td>{row.end_date ? new Date(row.end_date).toLocaleString() : '--'}</td>
                   <td>
-                    <Input
+                    <Select
                       value={String(draft.resolved_option_id)}
                       onChange={(event) => updateDraft(row.id, 'resolved_option_id', event.target.value)}
-                      placeholder="Option ID"
-                    />
+                    >
+                      {options.length === 0 ? (
+                        <option value="1">No options loaded</option>
+                      ) : (
+                        options.map((opt) => (
+                          <option key={opt.id} value={String(opt.id)}>
+                            {opt.name}
+                          </option>
+                        ))
+                      )}
+                    </Select>
                     {' '}
                     <Input
                       value={draft.resolution_evidence_url}

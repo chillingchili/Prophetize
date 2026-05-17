@@ -220,13 +220,14 @@ export default function DetailsScreen() {
   const [shareInput, setShareInput] = useState('1');
   const [tradeBalanceSnapshot, setTradeBalanceSnapshot] = useState<number | null>(null);
   const [userPosition, setUserPosition] = useState<number | null>(null);
+  const [userPL, setUserPL] = useState<number | null>(null);
   const [comments, setComments] = useState<api.CommentItem[]>([]);
   const [commentsLoading, setCommentsLoading] = useState(false);
   const [commentsError, setCommentsError] = useState<string | null>(null);
   const [commentInput, setCommentInput] = useState('');
   const [commentSubmitting, setCommentSubmitting] = useState(false);
   const [commentSubmissionState, setCommentSubmissionState] = useState<CommentSubmissionState>(null);
-  const [trendPoints, setTrendPoints] = useState<TrendPoint[]>([]);
+  const [trendPointsByOption, setTrendPointsByOption] = useState<Record<number, TrendPoint[]>>({});
   const [selectedTimeframe, setSelectedTimeframe] = useState<api.MarketHistoryTimeframe>('1d');
   const [chartLoading, setChartLoading] = useState(false);
   const [chartError, setChartError] = useState<string | null>(null);
@@ -403,7 +404,7 @@ export default function DetailsScreen() {
   }, [commentSubmissionState]);
 
   useEffect(() => {
-    setTrendPoints([]);
+    setTrendPointsByOption({});
     setChartError(null);
   }, [marketID]);
 
@@ -426,6 +427,7 @@ export default function DetailsScreen() {
       const { ok, data } = await api.getPortfolioPositionByMarketId(marketID);
       if (!ok) {
         setUserPosition(null);
+        setUserPL(null);
         return;
       }
 
@@ -448,48 +450,66 @@ export default function DetailsScreen() {
       } else {
         setUserPosition(null);
       }
+
+      const realizedPL = data?.realized_pl;
+      setUserPL(typeof realizedPL === 'number' ? realizedPL : null);
     } catch {
       setUserPosition(null);
+      setUserPL(null);
       return;
     }
   }, [authLoading, isCreateMode, marketID, token]);
 
   const loadMarketHistory = useCallback(async () => {
     if (isCreateMode || marketID === null || Number.isNaN(marketID) || marketID <= 0) {
-      setTrendPoints([]);
+      setTrendPointsByOption({});
       setChartError(null);
+      return;
+    }
+
+    const optionList = prediction?.options;
+    if (!optionList?.length) {
+      setTrendPointsByOption({});
+      setChartLoading(false);
       return;
     }
 
     setChartLoading(true);
     setChartError(null);
 
-    const { ok, data } = await api.getMarketHistory(marketID, selectedTimeframe, selectedOptionId);
-    if (!ok) {
-      setChartError(toSafeMessage((data as Record<string, unknown>)?.error, 'Chart data is temporarily unavailable.'));
-      setChartLoading(false);
-      return;
+    const results = await Promise.all(
+      optionList.map((opt) =>
+        api.getMarketHistory(marketID, selectedTimeframe, opt.id).then((r) => ({ optionId: opt.id, result: r }))
+      )
+    );
+
+    const nextMap: Record<number, TrendPoint[]> = {};
+    for (const { optionId, result } of results) {
+      if (!result.ok) {
+        setChartError(toSafeMessage(
+          (result.data as Record<string, unknown>)?.error,
+          'Chart data is temporarily unavailable.'
+        ));
+        continue;
+      }
+      const nextPoints = Array.isArray(result.data?.points)
+        ? result.data.points
+            .map((point: api.MarketHistoryPoint) => {
+              const timestamp = new Date(point.ts).getTime();
+              if (Number.isNaN(timestamp)) return null;
+              return {
+                value: Math.max(0, Math.min(100, Number(point.probability))),
+                timestamp,
+              };
+            })
+            .filter((point: TrendPoint | null): point is TrendPoint => Boolean(point))
+        : [];
+      nextMap[optionId] = nextPoints.slice(-MAX_TREND_POINTS);
     }
 
-    const nextPoints = Array.isArray(data?.points)
-      ? data.points
-          .map((point: api.MarketHistoryPoint) => {
-            const timestamp = new Date(point.ts).getTime();
-            if (Number.isNaN(timestamp)) {
-              return null;
-            }
-
-            return {
-              value: Math.max(0, Math.min(100, Number(point.probability))),
-              timestamp,
-            };
-          })
-          .filter((point: TrendPoint | null): point is TrendPoint => Boolean(point))
-      : [];
-
-    setTrendPoints(nextPoints.slice(-MAX_TREND_POINTS));
+    setTrendPointsByOption(nextMap);
     setChartLoading(false);
-  }, [isCreateMode, marketID, selectedOptionId, selectedTimeframe]);
+  }, [isCreateMode, marketID, prediction?.options, selectedTimeframe]);
 
   const loadComments = useCallback(async () => {
     if (marketID === null || Number.isNaN(marketID) || marketID <= 0) {
@@ -601,6 +621,10 @@ export default function DetailsScreen() {
   }, [category, description, outcomeValues, resolutionDateTime, title]);
 
   const handleCreateMarket = useCallback(async () => {
+    if (submitLoading) {
+      return;
+    }
+
     const validated = validateCreateForm();
     if (!validated) {
       return;
@@ -611,35 +635,40 @@ export default function DetailsScreen() {
     setSubmitError(null);
     setSubmitCompleted(false);
 
-    const { ok, data } = await api.createMarket({
-      title: title.trim(),
-      description: description.trim(),
-      category: validated.normalizedCategory,
-      endDate: validated.parsedDate.toISOString(),
-      options: validated.optionValues,
-    });
+    try {
+      const { ok, data } = await api.createMarket({
+        title: title.trim(),
+        description: description.trim(),
+        category: validated.normalizedCategory,
+        endDate: validated.parsedDate.toISOString(),
+        options: validated.optionValues,
+      });
 
-    setSubmitLoading(false);
+      if (!ok) {
+        setSubmitError(toSafeMessage(data?.error, 'Unable to submit market right now.'));
+        return;
+      }
 
-    if (!ok) {
-      setSubmitError(toSafeMessage(data?.error, 'Unable to submit market right now.'));
-      return;
+      setSubmitMessage(data?.message ?? 'Market submitted and pending admin approval.');
+      setSubmitCompleted(true);
+      setShowSubmitSuccessModal(true);
+      setTitle('');
+      setDescription('');
+      setCategory('SPORTS');
+      const nextDefault = new Date();
+      nextDefault.setDate(nextDefault.getDate() + 1);
+      nextDefault.setSeconds(0, 0);
+      setResolutionDateTime(nextDefault);
+      setOutcomeValues(['Yes', 'No']);
+      setCreateErrors({});
+      setSubmitError(null);
+    } catch (error) {
+      console.error('createMarket failed', error);
+      setSubmitError('An unexpected error occurred while submitting.');
+    } finally {
+      setSubmitLoading(false);
     }
-
-    setSubmitMessage(data?.message ?? 'Market submitted and pending admin approval.');
-    setSubmitCompleted(true);
-    setShowSubmitSuccessModal(true);
-    setTitle('');
-    setDescription('');
-    setCategory('SPORTS');
-    const nextDefault = new Date();
-    nextDefault.setDate(nextDefault.getDate() + 1);
-    nextDefault.setSeconds(0, 0);
-    setResolutionDateTime(nextDefault);
-    setOutcomeValues(['Yes', 'No']);
-    setCreateErrors({});
-    setSubmitError(null);
-  }, [title, description, validateCreateForm]);
+  }, [submitLoading, title, description, validateCreateForm]);
 
   const handleAddOutcome = useCallback(() => {
     setOutcomeValues((prev) => {
@@ -883,24 +912,50 @@ export default function DetailsScreen() {
   }, [selectedOption]);
 
   const chartData = useMemo(() => {
-    const fallback = liveProbability ?? 50;
-    const sampledPoints = sampleTrendPointsForChart(trendPoints, selectedTimeframe);
+    const options = prediction?.options ?? [];
+    const optionIds = Object.keys(trendPointsByOption).map(Number);
 
-    if (sampledPoints.length <= 1) {
+    if (!options.length || !optionIds.length) {
+      const fb = liveProbability ?? 50;
       return {
-        values: [fallback, fallback, fallback, fallback, fallback],
+        series: [{ optionId: 0, name: '', values: [fb, fb, fb, fb, fb] }],
         labels: ['--', '--', '--', '--', 'Now'],
       };
     }
 
-    return {
-      values: sampledPoints.map((point) => point.value),
-      labels: sampledPoints.map((point, index) => formatTrendLabel(point.timestamp, selectedTimeframe, index)),
-    };
-  }, [liveProbability, selectedTimeframe, trendPoints]);
+    const refId = options[0].id;
+    const refPoints = trendPointsByOption[refId] ?? [];
+    const sampledRef = sampleTrendPointsForChart(refPoints, selectedTimeframe);
+    const labels = sampledRef.length > 1
+      ? sampledRef.map((point, index) => formatTrendLabel(point.timestamp, selectedTimeframe, index))
+      : ['--', '--', '--', '--', 'Now'];
 
-  const chartSeries = chartData.values;
+    const series = options.map((opt) => {
+      const points = trendPointsByOption[opt.id] ?? [];
+      const sampled = sampleTrendPointsForChart(points, selectedTimeframe);
+      return {
+        optionId: opt.id,
+        name: opt.name,
+        values: sampled.map((p) => p.value),
+      };
+    });
+
+    return { series, labels };
+  }, [liveProbability, prediction?.options, selectedTimeframe, trendPointsByOption]);
+
+  const chartSeries = chartData.series;
   const chartLabels = chartData.labels;
+
+  const isResolved = prediction?.status === 'finalized';
+  const winningOption = useMemo(() => {
+    if (!isResolved || !prediction?.options?.length) return null;
+    const anyPred = prediction as any;
+    const resolvedId = Number(anyPred.resolved_option_id);
+    if (!Number.isInteger(resolvedId)) return null;
+    return prediction.options.find((opt) => opt.id === resolvedId) ?? null;
+  }, [prediction, isResolved]);
+  const resolutionEvidenceUrl = isResolved ? (prediction as any).resolution_evidence_url : null;
+  const resolutionNote = isResolved ? (prediction as any).resolution_note : null;
 
   useEffect(() => {
     if (isCreateMode || marketID === null || Number.isNaN(marketID) || marketID <= 0) {
@@ -938,18 +993,18 @@ export default function DetailsScreen() {
             return Number.isNaN(parsed) ? Date.now() : parsed;
           })();
 
-          if (!selectedOptionId || marketPayload.optionId === selectedOptionId) {
-            setTrendPoints((prev) => {
-              if (!prev.length) {
-                return [{ value: normalizedValue, timestamp: nextTimestamp }];
-              }
-
-              const lastPoint = prev[prev.length - 1];
-              if (Math.abs(lastPoint.value - normalizedValue) < 0.01) {
+          const optId = marketPayload.optionId;
+          if (typeof optId === 'number') {
+            setTrendPointsByOption((prev) => {
+              const existing = prev[optId] ?? [];
+              const lastPoint = existing[existing.length - 1];
+              if (lastPoint && Math.abs(lastPoint.value - normalizedValue) < 0.01) {
                 return prev;
               }
-
-              return [...prev, { value: normalizedValue, timestamp: nextTimestamp }].slice(-MAX_TREND_POINTS);
+              return {
+                ...prev,
+                [optId]: [...existing, { value: normalizedValue, timestamp: nextTimestamp }].slice(-MAX_TREND_POINTS),
+              };
             });
           }
 
@@ -984,7 +1039,7 @@ export default function DetailsScreen() {
     });
 
     return unsubscribe;
-  }, [isCreateMode, loadMarketData, loadMarketHistory, loadUserPosition, marketID, selectedOptionId, setBalanceFromSnapshot, userData?.id]);
+  }, [isCreateMode, loadMarketData, loadMarketHistory, loadUserPosition, marketID, setBalanceFromSnapshot, userData?.id]);
 
   const handlePostComment = useCallback(async () => {
     if (marketID === null || Number.isNaN(marketID) || marketID <= 0) {
@@ -1022,10 +1077,10 @@ export default function DetailsScreen() {
   if (isCreateMode) {
     return (
       <View className="flex-1" style={{ backgroundColor: ExploreTheme.pageBg }}>
-        <SafeAreaView edges={['top']} className="bg-white">
+        <SafeAreaView edges={['top']} style={{ backgroundColor: UI_COLORS.surface }}>
           <View
-            className="bg-white"
             style={{
+              backgroundColor: UI_COLORS.surface,
               borderBottomWidth: 1,
               borderBottomColor: ExploreTheme.headerBorder,
               paddingHorizontal: 20,
@@ -1264,7 +1319,7 @@ export default function DetailsScreen() {
         </ScrollView>
 
         <View
-          className="px-5 pt-3 pb-4"
+          className="px-5 pt-3 pb-10"
           style={{
             backgroundColor: UI_COLORS.surface,
             borderTopWidth: 1,
@@ -1400,10 +1455,10 @@ export default function DetailsScreen() {
 
   return (
     <View className="flex-1" style={{ backgroundColor: ExploreTheme.pageBg }}>
-      <SafeAreaView edges={['top']} className="bg-white">
+      <SafeAreaView edges={['top']} style={{ backgroundColor: UI_COLORS.surface }}>
           <View
-            className="bg-white"
             style={{
+              backgroundColor: UI_COLORS.surface,
               borderBottomWidth: 1,
               borderBottomColor: ExploreTheme.headerBorder,
               paddingHorizontal: 20,
@@ -1472,6 +1527,27 @@ export default function DetailsScreen() {
           </View>
         </View>
 
+        {isResolved && winningOption ? (
+          <View
+            className="mx-4 mt-3 rounded-2xl p-4"
+            style={{ backgroundColor: UI_COLORS.success + '15', borderWidth: 1, borderColor: UI_COLORS.success }}
+          >
+            <Text className="font-grotesk-bold text-[16px] mb-1" style={{ color: UI_COLORS.success }}>
+              Resolved: {winningOption.name} won
+            </Text>
+            {resolutionNote ? (
+              <Text className="font-jetbrain text-[12px]" style={{ color: ExploreTheme.secondaryText }}>
+                {resolutionNote}
+              </Text>
+            ) : null}
+            {resolutionEvidenceUrl ? (
+              <Text className="font-jetbrain text-[11px] mt-1" style={{ color: UI_COLORS.link }}>
+                Evidence
+              </Text>
+            ) : null}
+          </View>
+        ) : null}
+
         <View className="mx-4 mt-3 flex-row items-center gap-2">
           {TIMEFRAME_OPTIONS.map((option) => {
             const isActive = selectedTimeframe === option.value;
@@ -1514,7 +1590,7 @@ export default function DetailsScreen() {
         ) : null}
 
         <View className="mt-3">
-          <MarketDetailTrendChart values={chartSeries} labels={chartLabels} />
+          <MarketDetailTrendChart series={chartSeries} labels={chartLabels} selectedOptionId={selectedOptionId} />
         </View>
 
         <View className="mt-7 mb-7 items-center justify-center">
@@ -1530,9 +1606,10 @@ export default function DetailsScreen() {
         </View>
 
         <View className="mt-3">
-          <MarketDetailSummary prediction={prediction} userPosition={userPosition} />
+          <MarketDetailSummary prediction={prediction} userPosition={userPosition} userPL={userPL} />
         </View>
 
+        {isResolved ? null : (
         <View
           className="mx-4 mt-3 rounded-2xl p-4"
           style={{
@@ -1600,8 +1677,8 @@ export default function DetailsScreen() {
             editable={!tradeLoading}
             keyboardType="decimal-pad"
             placeholder="Shares"
-            className="bg-white rounded-xl px-4 py-3 mb-3 font-jetbrain"
-            style={{ borderWidth: 1, borderColor: ExploreTheme.headerBorder, color: ExploreTheme.titleText }}
+            className="rounded-xl px-4 py-3 mb-3 font-jetbrain"
+            style={{ backgroundColor: UI_COLORS.surface, borderWidth: 1, borderColor: ExploreTheme.headerBorder, color: ExploreTheme.titleText }}
           />
 
           <View className="flex-row gap-2 mb-3">
@@ -1704,6 +1781,7 @@ export default function DetailsScreen() {
             </Text>
           ) : null}
         </View>
+        )}
 
         <View
           className="mx-4 mt-3 rounded-2xl p-4"
@@ -1728,8 +1806,8 @@ export default function DetailsScreen() {
             placeholder="Share your take..."
             multiline
             maxLength={280}
-            className="bg-white rounded-xl px-4 py-3 mb-3 font-jetbrain"
-            style={{ borderWidth: 1, borderColor: ExploreTheme.headerBorder, color: ExploreTheme.titleText, minHeight: 84 }}
+            className="rounded-xl px-4 py-3 mb-3 font-jetbrain"
+            style={{ backgroundColor: UI_COLORS.surface, borderWidth: 1, borderColor: ExploreTheme.headerBorder, color: ExploreTheme.titleText, minHeight: 84 }}
           />
           <TouchableOpacity
             disabled={commentSubmitting}

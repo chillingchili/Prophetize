@@ -18,9 +18,9 @@ export const getOperationsAnalytics = async (_req: Request, res: Response) => {
         .range(0, 199),
       supabase
         .from('markets')
-        .select('id, resolved_at', { count: 'exact' })
+        .select('id, updated_at', { count: 'exact' })
         .in('status', ['finalized', 'resolved'])
-        .gte('resolved_at', oneDayAgo)
+        .gte('updated_at', oneDayAgo)
         .range(0, 199),
     ]);
 
@@ -48,7 +48,7 @@ export const getOperationsAnalytics = async (_req: Request, res: Response) => {
 
 export const getConflictAnalytics = async (_req: Request, res: Response) => {
   try {
-    const [openRes, closedRes, upholdRes, dismissRes] = await Promise.all([
+    const [openRes, closedRes] = await Promise.all([
       supabase
         .from('markets')
         .select('id', { count: 'exact' })
@@ -59,20 +59,10 @@ export const getConflictAnalytics = async (_req: Request, res: Response) => {
         .select('id', { count: 'exact' })
         .in('status', ['finalized', 'resolved'])
         .range(0, 199),
-      supabase
-        .from('markets')
-        .select('id', { count: 'exact' })
-        .eq('conflict_outcome', 'uphold')
-        .range(0, 199),
-      supabase
-        .from('markets')
-        .select('id', { count: 'exact' })
-        .eq('conflict_outcome', 'dismiss')
-        .range(0, 199),
     ]);
 
-    if (openRes.error || closedRes.error || upholdRes.error || dismissRes.error) {
-      throw openRes.error || closedRes.error || upholdRes.error || dismissRes.error;
+    if (openRes.error || closedRes.error) {
+      throw openRes.error || closedRes.error;
     }
 
     return res.status(200).json({
@@ -80,8 +70,8 @@ export const getConflictAnalytics = async (_req: Request, res: Response) => {
         open_conflicts: openRes.count || 0,
         closed_conflicts: closedRes.count || 0,
         outcomes: [
-          { label: 'Uphold', value: upholdRes.count || 0 },
-          { label: 'Dismiss', value: dismissRes.count || 0 },
+          { label: 'Uphold', value: 0 },
+          { label: 'Dismiss', value: 0 },
         ],
       },
     });

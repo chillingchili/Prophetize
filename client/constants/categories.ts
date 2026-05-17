@@ -5,6 +5,7 @@ const categories = [
     { label: "Politics", endpoint: "category/politics" },
     { label: "Crypto",   endpoint: "category/crypto"   },
     { label: "School",   endpoint: "category/school"   },
+    { label: "Resolved", endpoint: "resolved"           },
 ];
 
 export default categories;

@@ -5,6 +5,7 @@ import { useRouter, Stack } from 'expo-router';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAppTheme } from '@/hooks/use-app-theme';
+import { useTheme } from '@/context/ThemeContext';
 import { useFocusEffect } from '@react-navigation/native';
 
 const PUSH_KEY = '@app_settings_push_notifications';
@@ -13,6 +14,7 @@ const COMPACT_KEY = '@app_settings_compact_numbers';
 export default function AppSettingsScreen() {
   const router = useRouter();
   const theme = useAppTheme();
+  const { isDark, toggleDarkMode } = useTheme();
 
   const [pushEnabled, setPushEnabled] = useState(true);
   const [compactEnabled, setCompactEnabled] = useState(false);
@@ -66,6 +68,8 @@ export default function AppSettingsScreen() {
             try {
               await AsyncStorage.removeItem(PUSH_KEY);
               await AsyncStorage.removeItem(COMPACT_KEY);
+              await AsyncStorage.removeItem('@app_theme_dark_mode');
+              await toggleDarkMode(false);
             } catch {
               // ignore
             }
@@ -130,6 +134,8 @@ export default function AppSettingsScreen() {
             className="mt-2 rounded-xl overflow-hidden"
             style={{ backgroundColor: theme.surfaceElevated }}
           >
+            {renderToggleRow('Dark Mode', isDark, toggleDarkMode)}
+            <View className="h-[1px] ml-4" style={{ backgroundColor: theme.border }} />
             {renderToggleRow('Compact Numbers', compactEnabled, toggleCompact)}
           </View>
         </View>

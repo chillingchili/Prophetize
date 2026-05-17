@@ -1,6 +1,7 @@
 import {Pressable, Text} from 'react-native';
 import {useState} from 'react';
 import { ExploreTheme } from '@/constants/explore-theme';
+import { UI_COLORS } from '@/constants/ui-tokens';
 
 type Props = {
     label:string;
@@ -21,15 +22,15 @@ export default function CategoryBtn({label, isActive, onPress}:Props) {
             onPressIn={()=>setPressed(true)}
             onPressOut={()=>setPressed(false)}
             style={{
-                    backgroundColor: (isActive ? ExploreTheme.titleText : 'white'),
+                    backgroundColor: (isActive ? UI_COLORS.accent : UI_COLORS.surface),
                     borderWidth: 1,
-                    borderColor: (isActive ? ExploreTheme.titleText : ExploreTheme.headerBorder),
+                    borderColor: (isActive ? UI_COLORS.accent : ExploreTheme.headerBorder),
                     transform: [{ scale: pressed ? 0.97 : 1 }],
                 }}
             >
             <Text
             className="font-grotesk-bold text-[14px]"
-            style={{ color: isActive ? 'white' : ExploreTheme.secondaryText }}
+            style={{ color: isActive ? '#FFFFFF' : ExploreTheme.secondaryText }}
             >
                 {label}
             </Text>

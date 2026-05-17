@@ -8,7 +8,6 @@ import { UI_COLORS } from '@/constants/ui-tokens';
 type Props = {
     balance: number;
     unreadCount?: number;
-    onCreatePress?: () => void;
     onNotificationPress?: () => void;
 }
 
@@ -63,7 +62,7 @@ function AnimatedBalance({ value }: { value: number }) {
     );
 }
 
-export default function HomeHeader({ balance, unreadCount = 0, onCreatePress, onNotificationPress }: Props) {
+export default function HomeHeader({ balance, unreadCount = 0, onNotificationPress }: Props) {
     return (
         <View className="h-auto w-full flex-row items-center gap-2">
             <View className="flex-row items-center gap-3 flex-1 p-2 inline-flex">
@@ -75,86 +74,59 @@ export default function HomeHeader({ balance, unreadCount = 0, onCreatePress, on
                 <AnimatedBalance value={balance} />
             </View>
 
-            <View className="flex-row items-center gap-2">
-                <Pressable
-                    onPress={() => {
-                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                        onCreatePress?.();
-                    }}
-                    hitSlop={10}
-                    accessibilityLabel="Create market"
-                    accessibilityRole="button"
-                    accessibilityHint="Opens create market form (secondary action)"
-                    style={({ pressed }) => ({
-                        width: 40,
-                        height: 40,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        opacity: pressed ? 0.9 : 1,
-                        transform: [{ scale: pressed ? 0.96 : 1 }],
-                        backgroundColor: pressed ? UI_COLORS.surfaceMuted : UI_COLORS.surfaceSoft,
-                        borderWidth: 1,
-                        borderColor: UI_COLORS.borderSoft,
-                    })}
-                    className="rounded-full"
-                >
-                    <Ionicons name="add" size={18} color={ExploreTheme.titleText} />
-                </Pressable>
-
-                <Pressable
-                    onPress={() => {
-                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                        onNotificationPress?.();
-                    }}
-                    hitSlop={10}
-                    accessibilityLabel="Notifications"
-                    accessibilityRole="button"
-                    accessibilityHint="Opens notifications"
-                    style={({ pressed }) => ({
-                        width: 40,
-                        height: 40,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        opacity: pressed ? 0.9 : 1,
-                        transform: [{ scale: pressed ? 0.96 : 1 }],
-                        backgroundColor: pressed ? UI_COLORS.surfaceMuted : UI_COLORS.surfaceSoft,
-                        borderWidth: 1,
-                        borderColor: UI_COLORS.borderSoft,
-                    })}
-                    className="rounded-full"
-                >
-                    <View>
-                        <Ionicons name="notifications-outline" size={20} color={ExploreTheme.titleText} />
-                        {unreadCount > 0 && (
-                            <View
+            <Pressable
+                onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    onNotificationPress?.();
+                }}
+                hitSlop={10}
+                accessibilityLabel="Notifications"
+                accessibilityRole="button"
+                accessibilityHint="Opens notifications"
+                style={({ pressed }) => ({
+                    width: 40,
+                    height: 40,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    opacity: pressed ? 0.9 : 1,
+                    transform: [{ scale: pressed ? 0.96 : 1 }],
+                    backgroundColor: pressed ? UI_COLORS.surfaceMuted : UI_COLORS.surfaceSoft,
+                    borderWidth: 1,
+                    borderColor: UI_COLORS.borderSoft,
+                })}
+                className="rounded-full"
+            >
+                <View>
+                    <Ionicons name="notifications-outline" size={20} color={ExploreTheme.titleText} />
+                    {unreadCount > 0 && (
+                        <View
+                            style={{
+                                position: 'absolute',
+                                top: -2,
+                                right: -4,
+                                minWidth: 16,
+                                height: 16,
+                                borderRadius: 8,
+                                backgroundColor: UI_COLORS.accent,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                paddingHorizontal: 3,
+                            }}
+                        >
+                            <Text
                                 style={{
-                                    position: 'absolute',
-                                    top: -2,
-                                    right: -4,
-                                    minWidth: 16,
-                                    height: 16,
-                                    borderRadius: 8,
-                                    backgroundColor: UI_COLORS.accent,
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    paddingHorizontal: 3,
+                                    color: '#FFFFFF',
+                                    fontSize: 10,
+                                    fontWeight: '700',
+                                    lineHeight: 14,
                                 }}
                             >
-                                <Text
-                                    style={{
-                                        color: '#FFFFFF',
-                                        fontSize: 10,
-                                        fontWeight: '700',
-                                        lineHeight: 14,
-                                    }}
-                                >
-                                    {unreadCount > 99 ? '99+' : unreadCount}
-                                </Text>
-                            </View>
-                        )}
-                    </View>
-                </Pressable>
-            </View>
+                                {unreadCount > 99 ? '99+' : unreadCount}
+                            </Text>
+                        </View>
+                    )}
+                </View>
+            </Pressable>
         </View>
     );
 }

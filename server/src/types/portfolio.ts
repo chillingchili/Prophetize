@@ -58,6 +58,7 @@ export interface MarketOptionPosition {
   option_id: string;
   option_name: string;
   shares_owned: number;
+  avg_entry_price: number;
 }
 
 export interface MarketPositionSnapshot {

@@ -1,6 +1,7 @@
 import { View } from 'react-native';
 
 import { ExploreTheme } from '@/constants/explore-theme';
+import { UI_COLORS } from '@/constants/ui-tokens';
 import SkeletonShell from '../skeleton/skeleton-shell';
 
 export default function CardSkeleton() {
@@ -11,7 +12,7 @@ export default function CardSkeleton() {
                 borderRadius: 12,
                 backgroundColor: ExploreTheme.sectionDivider,
                 borderWidth: 1,
-                borderColor: '#E2E8F0',
+                borderColor: UI_COLORS.borderSoft,
                 paddingHorizontal: 14,
                 paddingVertical: 14,
             }}
@@ -23,7 +24,7 @@ export default function CardSkeleton() {
                             width: '72%',
                             height: 14,
                             borderRadius: 7,
-                            backgroundColor: '#DDE6F2',
+                            backgroundColor: UI_COLORS.borderSoft,
                         }}
                     />
                     <View
@@ -31,7 +32,7 @@ export default function CardSkeleton() {
                             width: '54%',
                             height: 11,
                             borderRadius: 6,
-                            backgroundColor: '#E6EDF7',
+                            backgroundColor: UI_COLORS.surfaceSoft,
                         }}
                     />
                 </View>
@@ -42,7 +43,7 @@ export default function CardSkeleton() {
                             width: 66,
                             height: 24,
                             borderRadius: 12,
-                            backgroundColor: '#DEE8F5',
+                            backgroundColor: UI_COLORS.surfaceMuted,
                         }}
                     />
                     <View
@@ -50,7 +51,7 @@ export default function CardSkeleton() {
                             width: 84,
                             height: 24,
                             borderRadius: 12,
-                            backgroundColor: '#D9F2E5',
+                            backgroundColor: UI_COLORS.success + '30',
                         }}
                     />
                 </View>
