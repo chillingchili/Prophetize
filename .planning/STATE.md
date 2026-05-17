@@ -4,7 +4,7 @@ milestone: v1.0
 milestone_name: milestone
 status: completed
 stopped_at: Completed 11-02-PLAN.md
-last_updated: "2026-04-27T14:41:32.671Z"
+last_updated: "2026-04-27T14:42:21.461Z"
 last_activity: 2026-04-27
 progress:
   total_phases: 11
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-04-13)
 Phase: 10
 Plan: 06
 Status: completed
-Last activity: 2026-04-27
+Last activity: 2026-05-17 - Completed quick task 260415: pending approvals for the admin web should show the description of the market instead of just showing the title
 
 Progress: [████████░░] 75%
 
@@ -113,6 +113,12 @@ None yet.
 ### Blockers/Concerns
 
 None yet.
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260415 | pending approvals for the admin web should show the description of the market instead of just showing the title | 2026-05-17 | 1138f1d | [260415-pending-approvals-for-the-admin-web-shou](./quick/260415-pending-approvals-for-the-admin-web-shou/) |
 
 ## Session Continuity
 
