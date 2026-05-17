@@ -7,4 +7,9 @@ const router = Router();
 router.post("/register", requireAuth, notificationController.registerNotificationChannel);
 router.post("/trigger", requireAuth, notificationController.triggerNotification);
 
+router.get("/", requireAuth, notificationController.getNotifications);
+router.patch("/read", requireAuth, notificationController.markAsRead);
+router.patch("/read-all", requireAuth, notificationController.markAllAsRead);
+router.get("/unread-count", requireAuth, notificationController.getUnreadCount);
+
 export default router;
