@@ -6,6 +6,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { ExploreTheme } from '@/constants/explore-theme';
 import { UI_COLORS } from '@/constants/ui-tokens';
 import * as api from '@/utils/api';
+import { useNotificationBadge } from '@/context/NotificationBadgeContext';
 
 const toFollowErrorMessage = (value: unknown): string => {
   if (typeof value !== 'string') {
@@ -18,6 +19,7 @@ const toFollowErrorMessage = (value: unknown): string => {
 
 export default function NotificationsScreen() {
   const router = useRouter();
+  const { resetUnreadCount } = useNotificationBadge();
   const [items, setItems] = useState<api.NotificationInboxItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -48,12 +50,15 @@ export default function NotificationsScreen() {
     }
 
     setItems(result.data.items);
+    if (result.data.source === 'backend') {
+      resetUnreadCount(); // Reset badge when inbox is opened with real data
+    }
     if (result.data.source === 'fallback') {
       setInboxFallbackMessage(result.data.message ?? 'Notification inbox endpoint is not available yet.');
     }
 
     setIsLoading(false);
-  }, []);
+  }, [resetUnreadCount]);
 
   useEffect(() => {
     void loadNotifications();
@@ -145,9 +150,30 @@ export default function NotificationsScreen() {
             <Pressable onPress={() => router.back()} hitSlop={12}>
               <MaterialIcons name="arrow-back" size={22} color={ExploreTheme.titleText} />
             </Pressable>
-            <Text className="font-grotesk-bold text-[20px]" style={{ color: ExploreTheme.titleText }}>
+            <Text className="font-grotesk-bold text-[20px] flex-1" style={{ color: ExploreTheme.titleText }}>
               Notifications
             </Text>
+            {items.length > 0 && !inboxFallbackMessage && (
+              <Pressable
+                onPress={async () => {
+                  // Optimistic: clear all items' visual state
+                  setItems((current) => current.map((item) => ({ ...item, is_read: true })));
+                  resetUnreadCount();
+                  const result = await api.markAllNotificationsAsRead();
+                  if (!result.ok) {
+                    // Revert on failure — reload
+                    void loadNotifications();
+                  }
+                }}
+                accessibilityRole="button"
+                accessibilityLabel="Mark all notifications as read"
+                hitSlop={8}
+              >
+                <Text className="font-jetbrain text-[12px]" style={{ color: ExploreTheme.linkText }}>
+                  Mark all as read
+                </Text>
+              </Pressable>
+            )}
           </View>
         </View>
       </SafeAreaView>

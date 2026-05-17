@@ -2,6 +2,7 @@ import * as SecureStore from 'expo-secure-store';
 import backendUrl from '../constants/backendUrl';
 
 const baseUrl = backendUrl;
+const FETCH_TIMEOUT_MS = 15000;
 const NETWORK_ERROR_MESSAGE = 'Network request failed. Check backend server and API URL.';
 
 let _clearAuth: (() => Promise<void>) | null = null;
@@ -77,9 +78,15 @@ const safeJson = async (response: Response) => {
     }
 };
 
+const fetchWithTimeout = (url: string, options: RequestInit, timeoutMs: number = FETCH_TIMEOUT_MS) => {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeoutMs);
+    return fetch(url, { ...options, signal: controller.signal }).finally(() => clearTimeout(id));
+};
+
 export const post = async(endpoint:string, body?:object) => {
     const token = await getToken();
-    const doRequest = () => fetch(baseUrl+endpoint, {
+    const doRequest = () => fetchWithTimeout(baseUrl+endpoint, {
         method: 'POST',
         headers: {
             'Content-Type':'application/json',
@@ -98,7 +105,7 @@ export const post = async(endpoint:string, body?:object) => {
 
 export const get = async(endpoint:string) => {
     const token = await getToken();
-    const doRequest = () => fetch(baseUrl+endpoint, {
+    const doRequest = () => fetchWithTimeout(baseUrl+endpoint, {
         method: 'GET',
         headers: {
             'Content-Type':'application/json',
@@ -526,10 +533,14 @@ export const getPortfolioPositionByMarketId = async (marketId: number) => {
         };
     }
 
+    const root = (payload as Record<string, unknown>) || {};
+    const realizedPL = typeof root.realized_pl === 'number' ? root.realized_pl : null;
+
     return {
         ok: true,
         data: {
             snapshot,
+            realized_pl: realizedPL,
         },
     };
 };
@@ -863,6 +874,14 @@ export const getNotifications = async (): Promise<{
             },
         };
     }
+};
+
+export const markNotificationAsRead = async (notificationId: string) => {
+    return patch('/notifications/read', { id: notificationId });
+};
+
+export const markAllNotificationsAsRead = async () => {
+    return patch('/notifications/read-all', {});
 };
 
 export type FollowAction = 'follow' | 'unfollow';
