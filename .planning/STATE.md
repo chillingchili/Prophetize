@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 11-02-PLAN.md
-last_updated: "2026-04-27T14:42:21.461Z"
-last_activity: 2026-04-27
+stopped_at: Completed Phase 12 (12-01 + 12-02) — notification flow
+last_updated: "2026-05-17T14:42:21.461Z"
+last_activity: 2026-05-17
 progress:
-  total_phases: 11
-  completed_phases: 5
-  total_plans: 18
-  completed_plans: 13
+  total_phases: 12
+  completed_phases: 6
+  total_plans: 20
+  completed_plans: 15
   percent: 75
 ---
 
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-13)
 
 **Core value:** Ship reliable prediction-market features with contract-first backend/frontend alignment.
-**Current focus:** Phase 10 — refactor and add mre settings to profile page
+**Current focus:** Phase 12 — add notification flow and function to the app
 
 ## Current Position
 
-Phase: 10
-Plan: 06
+Phase: 12
+Plan: 02
 Status: completed
-Last activity: 2026-05-17 - Completed quick task 260415: pending approvals for the admin web should show the description of the market instead of just showing the title
+Last activity: 2026-05-17 - Completed Phase 12 plans 01 (backend notifications) and 02 (client notification UX)
 
-Progress: [████████░░] 75%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -65,6 +65,8 @@ Progress: [████████░░] 75%
 | Phase 10 P06 | 15m | 3 tasks | 7 files |
 | Phase 11-change-auth-of-admin-web-to-be-simpler P01 | 5min | 2 tasks | 2 files |
 | Phase 11-change-auth-of-admin-web-to-be-simpler P02 | 5min | 2 tasks | 4 files |
+| Phase 12-notification-infra P01 | 12min | 3 tasks | 6 files |
+| Phase 12-notification-ux P02 | 10min | 3 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -96,6 +98,8 @@ Progress: [████████░░] 75%
 - [Phase 10]: Stored app preferences in AsyncStorage with simple boolean string keys for persistence across restarts.
 - [Phase 11-change-auth-of-admin-web-to-be-simpler]: Used localStorage for web platform auth persistence instead of SecureStore; token keys renamed to admin_access_token/admin_refresh_token for clarity; registerClearAuth wired in AdminAuthProvider useEffect
 - [Phase 11-change-auth-of-admin-web-to-be-simpler]: Used inline styles for login page centering to avoid modifying styles.css; replaced isAuthed derived from getStoredAdminToken() with useAdminAuth().isAuthed; renamed isLoading to isQueueLoading to avoid collision with auth isLoading; loadQueues guards on isAuthed instead of manual token check; handleLogout clears all queue state
+- [Phase 12-notification-infra]: Notification creation is non-blocking (async IIFE) to avoid delaying market resolution response; using supabaseAdmin (service role) for all notification ops to bypass RLS; admin announcements target /tabs/profile path
+- [Phase 12-notification-ux]: Badge resets when notification screen opens with real backend data (not on mount); mark-all-read uses optimistic UI (clear items first, revert on failure); userId matching for notification.new is done client-side since room is broadcast
 
 ### Roadmap Evolution
 
@@ -105,6 +109,8 @@ Progress: [████████░░] 75%
 - Phase 9 added: Create an admin dahsbaord for the admins to manage users, look at data, resolve user conflicts, and most importantly, manage the user created markets. Use react-bits and shadcn ui to make it simple and effective enough
 - Phase 10 added: refactor and add mre settings to profile page
 - Phase 11 added: change auth of admin web to be simpler
+- Phase 12 added: Add notification flow and function to the app
+- Phase 12 context gathered: notification triggers, delivery mechanism, unread badge UX, backend persistence
 
 ### Pending Todos
 
@@ -119,9 +125,10 @@ None yet.
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 260415 | pending approvals for the admin web should show the description of the market instead of just showing the title | 2026-05-17 | 1138f1d | [260415-pending-approvals-for-the-admin-web-shou](./quick/260415-pending-approvals-for-the-admin-web-shou/) |
+| 260416 | Fix the 10 behavioral/UX cons from the impeccable audit on ProfileScreen (sub-components, tokens, error/loading/cache) | 2026-05-17 | (pending) | [260416-fix-the-cons-from-the-impeccable-audit-o](./quick/260416-fix-the-cons-from-the-impeccable-audit-o/) |
 
 ## Session Continuity
 
-Last session: 2026-04-27T14:37:22.981Z
-Stopped at: Completed 11-02-PLAN.md
+Last session: 2026-05-17T14:42:21.461Z
+Stopped at: Completed Phase 12 (12-01 + 12-02) — notification flow
 Resume file: None
