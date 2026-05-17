@@ -1,7 +1,7 @@
 import { io, Socket } from 'socket.io-client';
 import backendUrl from '@/constants/backendUrl';
 
-export type RealtimeEventName = 'market.updated' | 'portfolio.updated' | 'leaderboard.updated';
+export type RealtimeEventName = 'market.updated' | 'portfolio.updated' | 'leaderboard.updated' | 'notification.new';
 
 export type RealtimeConnectionState = 'connected' | 'reconnecting' | 'stale' | 'disconnected';
 
@@ -28,10 +28,25 @@ export type LeaderboardUpdatedPayload = {
     updatedAt: string;
 };
 
+export type NotificationNewPayload = {
+    userId: string;
+    notification: {
+        id: string;
+        type: string;
+        title: string;
+        body: string;
+        target_path: string;
+        target_signature: string;
+        created_at: string;
+        is_read: boolean;
+    };
+};
+
 type RealtimePayloadMap = {
     'market.updated': MarketUpdatedPayload;
     'portfolio.updated': PortfolioUpdatedPayload;
     'leaderboard.updated': LeaderboardUpdatedPayload;
+    'notification.new': NotificationNewPayload;
 };
 
 type Subscription = {
@@ -43,7 +58,7 @@ type Subscription = {
     lastReconnectAt: number;
 };
 
-const SOCKET_EVENTS: RealtimeEventName[] = ['market.updated', 'portfolio.updated', 'leaderboard.updated'];
+const SOCKET_EVENTS: RealtimeEventName[] = ['market.updated', 'portfolio.updated', 'leaderboard.updated', 'notification.new'];
 const RECONNECT_RESYNC_COOLDOWN_MS = 3000;
 const STALE_STATE_DELAY_MS = 12000;
 
@@ -160,6 +175,10 @@ const ensureSocket = () => {
 
         socket.on('leaderboard.updated', (payload: LeaderboardUpdatedPayload) => {
             notifyEvent('leaderboard.updated', payload);
+        });
+
+        socket.on('notification.new', (payload: NotificationNewPayload) => {
+            notifyEvent('notification.new', payload);
         });
 
         socket.on('disconnect', () => {
