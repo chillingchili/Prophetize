@@ -20,6 +20,7 @@ import {
 type MarketRow = {
   id: number;
   title: string;
+  description: string;
   category: string;
   created_at?: string;
   end_date?: string;

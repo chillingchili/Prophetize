@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 type PendingMarket = {
   id: number;
   title: string;
+  description: string;
   category: string;
   created_at?: string;
 };
@@ -39,7 +40,10 @@ export const PendingApprovalTable = ({ rows, onApprove, onReject }: Props) => {
           ) : (
             rows.map((row) => (
               <tr key={row.id}>
-                <td>{row.title}</td>
+                <td>
+                  <div>{row.title}</div>
+                  <div style={{ fontSize: '0.8em', color: '#888' }}>{row.description}</div>
+                </td>
                 <td>{row.category}</td>
                 <td>{row.created_at ? new Date(row.created_at).toLocaleString() : '--'}</td>
                 <td>
