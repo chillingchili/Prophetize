@@ -5,7 +5,7 @@ import { UI_COLORS } from '@/constants/ui-tokens';
 
 type Props = {
     balance: number;
-    hasNotification?: boolean;
+    unreadCount?: number;
     onNotificationPress?: () => void;
     onSearchChange?: (text: string) => void;
     onSearchSubmit?: (text: string) => void;
@@ -13,7 +13,7 @@ type Props = {
 
 export default function SearchHeader({
     balance,
-    hasNotification = false,
+    unreadCount = 0,
     onNotificationPress,
     onSearchChange,
     onSearchSubmit,
@@ -65,20 +65,32 @@ export default function SearchHeader({
                 >
                     <View>
                         <Ionicons name="notifications-outline" size={24} color={UI_COLORS.textPrimary} />
-                        {hasNotification && (
+                        {unreadCount > 0 && (
                             <View
                                 style={{
                                     position: 'absolute',
-                                    top: 0,
-                                    right: 0,
-                                    width: 9,
-                                    height: 9,
-                                    borderRadius: 5,
+                                    top: -2,
+                                    right: -4,
+                                    minWidth: 16,
+                                    height: 16,
+                                    borderRadius: 8,
                                     backgroundColor: UI_COLORS.accent,
-                                    borderWidth: 1.5,
-                                    borderColor: UI_COLORS.surface,
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    paddingHorizontal: 3,
                                 }}
-                            />
+                            >
+                                <Text
+                                    style={{
+                                        color: '#FFFFFF',
+                                        fontSize: 10,
+                                        fontWeight: '700',
+                                        lineHeight: 14,
+                                    }}
+                                >
+                                    {unreadCount > 99 ? '99+' : unreadCount}
+                                </Text>
+                            </View>
                         )}
                     </View>
                 </Pressable>

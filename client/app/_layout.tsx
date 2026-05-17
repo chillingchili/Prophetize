@@ -7,17 +7,19 @@ import { usePathname, useRootNavigationState, useRouter, Stack } from 'expo-rout
 import React, { useEffect } from 'react';
 import { Platform } from 'react-native';
 import { AuthProvider, useAuth } from '../context/AuthContext';
+import { ThemeProvider, useTheme } from '@/context/ThemeContext';
 import LoadingScreen from '@/components/common/loading-screen';
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
 import * as api from '@/utils/api';
+import { NotificationBadgeProvider } from '@/context/NotificationBadgeContext';
 
 export default function Layout() {
     return (
-        
-      <AuthProvider>
-        <RootLayout />
-      </AuthProvider>
-  
+      <ThemeProvider>
+        <AuthProvider>
+          <RootLayout />
+        </AuthProvider>
+      </ThemeProvider>
     );
 }
 
@@ -26,6 +28,7 @@ function RootLayout() {
   const pathname = usePathname();
   const rootNavState = useRootNavigationState();
   const { token, isLoading } = useAuth();
+  const { colorScheme } = useTheme();
 
   useEffect(() => {
     if(isLoading) return;
@@ -71,21 +74,23 @@ function RootLayout() {
   }
 
   return (
-    <Stack>
-      <Stack.Screen name="index" options={{ title: 'Prophetize', headerShown: false }} />
-      <Stack.Screen name="login" options={{ title: 'Login', headerShown: false }} />
-      <Stack.Screen name="signUp" options={{ title: 'signUp', headerShown: false }} />
-      <Stack.Screen name="marketDetails" options={{ title: 'marketDetails', headerShown: false }}/>
-      <Stack.Screen name="explore-details" options={{ title: 'Explore', headerShown: false, presentation: 'modal' }}/>
-      <Stack.Screen name="categories" options={{ title: 'Categories', headerShown: false }}/>
-      <Stack.Screen name="notifications" options={{ title: 'Notifications', headerShown: false }}/>
-      <Stack.Screen name="tabs" options={{ title: 'tabs', headerShown: false }}/>
-      <Stack.Screen name="settings/edit-profile" options={{ title: 'Edit Profile', headerShown: false }} />
-      <Stack.Screen name="settings/notifications" options={{ title: 'Notifications', headerShown: false }} />
-      <Stack.Screen name="settings/app-settings" options={{ title: 'App Settings', headerShown: false }} />
-      <Stack.Screen name="settings/security" options={{ title: 'Security', headerShown: false }} />
-      <Stack.Screen name="settings/support" options={{ title: 'Support', headerShown: false }} />
-      <Stack.Screen name="settings/about" options={{ title: 'About', headerShown: false }} />
-    </Stack>
+    <NotificationBadgeProvider key={colorScheme}>
+      <Stack>
+        <Stack.Screen name="index" options={{ title: 'Prophetize', headerShown: false }} />
+        <Stack.Screen name="login" options={{ title: 'Login', headerShown: false }} />
+        <Stack.Screen name="signUp" options={{ title: 'signUp', headerShown: false }} />
+        <Stack.Screen name="marketDetails" options={{ title: 'marketDetails', headerShown: false }}/>
+        <Stack.Screen name="explore-details" options={{ title: 'Explore', headerShown: false, presentation: 'modal' }}/>
+        <Stack.Screen name="categories" options={{ title: 'Categories', headerShown: false }}/>
+        <Stack.Screen name="notifications" options={{ title: 'Notifications', headerShown: false }}/>
+        <Stack.Screen name="tabs" options={{ title: 'tabs', headerShown: false }}/>
+        <Stack.Screen name="settings/edit-profile" options={{ title: 'Edit Profile', headerShown: false }} />
+        <Stack.Screen name="settings/notifications" options={{ title: 'Notifications', headerShown: false }} />
+        <Stack.Screen name="settings/app-settings" options={{ title: 'App Settings', headerShown: false }} />
+        <Stack.Screen name="settings/security" options={{ title: 'Security', headerShown: false }} />
+        <Stack.Screen name="settings/support" options={{ title: 'Support', headerShown: false }} />
+        <Stack.Screen name="settings/about" options={{ title: 'About', headerShown: false }} />
+      </Stack>
+    </NotificationBadgeProvider>
   );
 }

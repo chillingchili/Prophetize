@@ -14,6 +14,7 @@ import ClaimAllowance from "@/components/home/claim-allowance";
 import HomeListSkeleton from '@/components/home/home-list-skeleton';
 import { useUserStore } from '../../context/useUserStore';
 import { PortfolioUpdatedPayload, subscribeRealtime } from '../../context/realtimeClient';
+import { useNotificationBadge } from '../../context/NotificationBadgeContext';
 import categories from "../../constants/categories";
 import { ExploreTheme } from "../../constants/explore-theme";
 import { UI_COLORS } from '@/constants/ui-tokens';
@@ -24,6 +25,7 @@ export default function HomeScreen() {
     const router = useRouter();
     const tabBarHeight = useBottomTabBarHeight();
     const { userData, fetchUserData, setBalanceFromSnapshot } = useUserStore();
+    const { unreadCount } = useNotificationBadge();
 
     const [predictions, setPrediction] = useState<Prediction[]>([]);
     const [activeCategory, setActiveCategory] = useState("trending"); 
@@ -132,6 +134,7 @@ export default function HomeScreen() {
                 >
                     <HomeHeader
                         balance={userData?.balance ?? 0}
+                        unreadCount={unreadCount}
                         onCreatePress={openCreateMarket}
                         onNotificationPress={() => router.push('/notifications')}
                     />

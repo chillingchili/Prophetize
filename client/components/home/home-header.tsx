@@ -7,7 +7,7 @@ import { UI_COLORS } from '@/constants/ui-tokens';
 
 type Props = {
     balance: number;
-    hasNotification?: boolean;
+    unreadCount?: number;
     onCreatePress?: () => void;
     onNotificationPress?: () => void;
 }
@@ -63,7 +63,7 @@ function AnimatedBalance({ value }: { value: number }) {
     );
 }
 
-export default function HomeHeader({ balance, hasNotification = true, onCreatePress, onNotificationPress }: Props) {
+export default function HomeHeader({ balance, unreadCount = 0, onCreatePress, onNotificationPress }: Props) {
     return (
         <View className="h-auto w-full flex-row items-center gap-2">
             <View className="flex-row items-center gap-3 flex-1 p-2 inline-flex">
@@ -125,20 +125,32 @@ export default function HomeHeader({ balance, hasNotification = true, onCreatePr
                 >
                     <View>
                         <Ionicons name="notifications-outline" size={20} color={ExploreTheme.titleText} />
-                        {hasNotification && (
+                        {unreadCount > 0 && (
                             <View
                                 style={{
                                     position: 'absolute',
-                                    top: 1,
-                                    right: 1,
-                                    width: 8,
-                                    height: 8,
-                                    borderRadius: 4,
+                                    top: -2,
+                                    right: -4,
+                                    minWidth: 16,
+                                    height: 16,
+                                    borderRadius: 8,
                                     backgroundColor: UI_COLORS.accent,
-                                    borderWidth: 1,
-                                    borderColor: UI_COLORS.surface,
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    paddingHorizontal: 3,
                                 }}
-                            />
+                            >
+                                <Text
+                                    style={{
+                                        color: '#FFFFFF',
+                                        fontSize: 10,
+                                        fontWeight: '700',
+                                        lineHeight: 14,
+                                    }}
+                                >
+                                    {unreadCount > 99 ? '99+' : unreadCount}
+                                </Text>
+                            </View>
                         )}
                     </View>
                 </Pressable>

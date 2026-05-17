@@ -15,6 +15,7 @@ import CategoryCard from '@/components/explore/category-card';
 import PredictionCard from '@/components/explore/prediction-card';
 import { EmptyState } from '@/components/common/empty-state';
 import { ExploreTheme } from '../../constants/explore-theme';
+import { useNotificationBadge } from '../../context/NotificationBadgeContext';
 
 // ─── Category display config ────────────────────────────────────────────────
 const GRID_CATEGORIES: { key: string; label: string }[] = [
@@ -56,6 +57,7 @@ function SectionHeader({
 export default function ExploreScreen() {
     const router = useRouter();
     const { userData } = useUserStore();
+    const { unreadCount } = useNotificationBadge();
     const hintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const [trending, setTrending] = useState<Prediction[]>([]);
@@ -147,6 +149,7 @@ export default function ExploreScreen() {
                 >
                     <SearchHeader
                         balance={userData?.balance ?? 0}
+                        unreadCount={unreadCount}
                         onSearchSubmit={goSearchResults}
                         onNotificationPress={() => router.push('/notifications')}
                     />
