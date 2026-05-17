@@ -1,6 +1,8 @@
 import { Response } from 'express';
-import { supabase } from '../config/supabaseClient';
+import { supabase, supabaseAdmin } from '../config/supabaseClient';
 import { AuthRequest } from '../types/authRequest';
+import * as notificationDbService from '../services/notificationDbService';
+import { emitNotificationNewEvent } from '../services/realtimeService';
 
 const INTERNAL_SERVER_ERROR_MESSAGE = 'Internal server error';
 
@@ -171,6 +173,41 @@ export const resolveMarket = async (req: AuthRequest, res: Response) => {
     } else {
       data = fullPatchResult.data;
     }
+
+    // Create resolution notifications asynchronously (non-blocking side effect)
+    (async () => {
+      const notifResult = await notificationDbService.createMarketResolutionNotifications(marketId, resolvedOptionId);
+      if (notifResult.error) {
+        console.error('Failed to create resolution notifications:', notifResult.error);
+      } else if (notifResult.count > 0) {
+        // Fetch created notifications to emit realtime events
+        const { data: newNotifs } = await supabaseAdmin
+          .from('notifications')
+          .select('*')
+          .eq('target_path', `/marketDetails?id=${marketId}`)
+          .order('created_at', { ascending: false })
+          .limit(notifResult.count);
+
+        if (newNotifs) {
+          for (const notif of newNotifs as Array<{
+            id: string; user_id: string; type: string; title: string;
+            body: string; target_path: string; target_signature: string;
+            created_at: string; is_read: boolean;
+          }>) {
+            emitNotificationNewEvent(notif.user_id, {
+              id: notif.id,
+              type: notif.type,
+              title: notif.title,
+              body: notif.body,
+              target_path: notif.target_path,
+              target_signature: notif.target_signature || '',
+              created_at: notif.created_at,
+              is_read: notif.is_read,
+            });
+          }
+        }
+      }
+    })();
 
     return res.status(200).json({
       message: 'Market resolved successfully.',
