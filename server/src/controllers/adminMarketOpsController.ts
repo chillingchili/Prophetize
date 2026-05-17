@@ -28,7 +28,7 @@ export const getPendingApprovals = async (_req: AuthRequest, res: Response) => {
   try {
     const { data, error } = await supabase
       .from('markets')
-      .select('id, title, category, status, created_at')
+      .select('id, title, description, category, status, created_at')
       .eq('status', 'pending')
       .order('created_at', { ascending: true })
       .range(0, 199);
