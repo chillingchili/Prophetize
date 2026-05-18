@@ -140,6 +140,32 @@ app.use('/admin', adminAnalyticsRoutes);
 
 // Starting server
 const PORT = process.env.PORT || 3000;
+
+// EADDRINUSE error handler — prints PID and kill command when port is occupied
+server.on('error', (err: NodeJS.ErrnoException) => {
+    if (err.code === 'EADDRINUSE') {
+        const isWin = process.platform === 'win32';
+        console.error(`\n✖ Port ${PORT} is already in use.`);
+        try {
+            const pidCmd = isWin
+                ? `netstat -ano | findstr :${PORT}`
+                : `lsof -ti:${PORT}`;
+            const stdout = require('child_process').execSync(pidCmd, { encoding: 'utf8', timeout: 5000 });
+            const pidLine = stdout.trim().split('\n').pop()?.trim();
+            if (pidLine) {
+                const pid = isWin ? pidLine.split(/\s+/).pop() : pidLine;
+                console.error(`   Occupied by PID: ${pid}`);
+                console.error(`\n   To free the port, run:\n`);
+                console.error(`   ${isWin ? `taskkill /PID ${pid} /F` : `kill -9 ${pid}`}\n`);
+            }
+        } catch { /* netstat/lsof failed — just show generic message */ }
+        console.error(`   Or run: npm run kill-port\n`);
+        process.exit(1);
+    }
+    console.error('Server error:', err);
+    process.exit(1);
+});
+
 server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
