@@ -166,7 +166,7 @@ export const resolveMarket = async (req: AuthRequest, res: Response) => {
 
     const resolutionPatch: Record<string, unknown> = {
       status: 'finalized',
-      resolved_option_id: resolvedOptionId,
+      resolution_option_id: resolvedOptionId,
       resolved_by: req.user?.id || null,
       resolved_at: new Date().toISOString(),
       resolution_evidence_url: evidenceUrl,
@@ -206,6 +206,11 @@ export const resolveMarket = async (req: AuthRequest, res: Response) => {
         p_market_id: marketId,
         p_resolved_option_id: resolvedOptionId,
       });
+      if (payoutError) {
+        console.error('handle_market_resolution RPC failed:', payoutError);
+      } else {
+        console.log('handle_market_resolution succeeded for market', marketId);
+      }
       if (payoutError) {
         console.error('handle_market_resolution RPC failed:', payoutError);
       }
@@ -250,7 +255,7 @@ export const resolveMarket = async (req: AuthRequest, res: Response) => {
       message: 'Market resolved successfully.',
       data,
       resolution: {
-        resolved_option_id: resolvedOptionId,
+        resolution_option_id: resolvedOptionId,
         resolution_evidence_url: evidenceUrl,
         resolution_note: resolutionNote,
         challenge_window_ends_at: challengeWindow,

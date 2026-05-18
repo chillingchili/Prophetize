@@ -105,7 +105,7 @@ export async function getPortfolioSummary(userId: string): Promise<PortfolioSumm
     .from('transactions')
     .select('amount')
     .eq('user_id', userId)
-    .eq('type', 'resolution')
+    .eq('type', 'RESOLUTION')
     .order('amount', { ascending: false })
     .limit(1);
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, LayoutChangeEvent } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -43,13 +43,16 @@ export function FloatingTabBar({ state, navigation }: BottomTabBarProps) {
   const indicatorWidthSV = useSharedValue(0);
   const isReady = useRef(false);
 
-  const visibleTabs = state.routes.filter(r => !['_sitemap', '+not-found'].includes(r.name));
+  const visibleTabs = useMemo(
+    () => state.routes.filter(r => !['_sitemap', '+not-found'].includes(r.name)),
+    [state.routes]
+  );
   const activeIndex = state.index;
+  const tabCount = visibleTabs.length;
 
   useEffect(() => {
-    if (pillWidth === 0 || visibleTabs.length === 0) return;
+    if (pillWidth === 0 || tabCount === 0) return;
 
-    const tabCount = visibleTabs.length;
     const availableWidth = pillWidth - PILL_H_PADDING * 2;
     const tabWidth = availableWidth / tabCount;
     const iw = tabWidth - TAB_GAP;
@@ -61,21 +64,42 @@ export function FloatingTabBar({ state, navigation }: BottomTabBarProps) {
       isReady.current = true;
     } else {
       indicatorOffset.value = withSpring(targetOffset, {
-        damping: 22,
-        stiffness: 180,
-        mass: 0.4,
+        damping: 26,
+        stiffness: 220,
+        mass: 0.3,
       });
     }
-  }, [activeIndex, pillWidth, visibleTabs.length, indicatorOffset, indicatorWidthSV]);
+  }, [activeIndex, pillWidth, tabCount, indicatorOffset, indicatorWidthSV]);
 
   const indicatorStyle = useAnimatedStyle(() => ({
     width: indicatorWidthSV.value,
     transform: [{ translateX: indicatorOffset.value }],
   }));
 
-  const onPillLayout = (e: LayoutChangeEvent) => {
+  const onPillLayout = useCallback((e: LayoutChangeEvent) => {
     setPillWidth(e.nativeEvent.layout.width);
-  };
+  }, []);
+
+  const handlePress = useCallback(
+    (route: (typeof state.routes)[0], isFocused: boolean) => {
+      const event = navigation.emit({
+        type: 'tabPress',
+        target: route.key,
+        canPreventDefault: true,
+      });
+      if (!isFocused && !event.defaultPrevented) {
+        navigation.navigate(route.name);
+      }
+    },
+    [navigation]
+  );
+
+  const handleLongPress = useCallback(
+    (route: (typeof state.routes)[0]) => {
+      navigation.emit({ type: 'tabLongPress', target: route.key });
+    },
+    [navigation]
+  );
 
   return (
     <View style={[styles.container, { paddingBottom: Math.max(insets.bottom, 8) }]}>
@@ -86,56 +110,41 @@ export function FloatingTabBar({ state, navigation }: BottomTabBarProps) {
             backgroundColor: UI_COLORS.surface,
             borderColor: UI_COLORS.borderSoft,
           },
+          styles.pillShadow,
         ]}
         onLayout={onPillLayout}
       >
-        {pillWidth > 0 ? (
+        {pillWidth > 0 && (
           <Animated.View
             style={[
               styles.indicator,
-              {
-                backgroundColor: UI_COLORS.accentSoft,
-                borderColor: UI_COLORS.accentBorder,
-              },
+              { backgroundColor: UI_COLORS.accentSoft },
               indicatorStyle,
+              styles.indicatorPressed,
             ]}
           />
-        ) : null}
+        )}
         {visibleTabs.map((route, index) => {
           const isFocused = activeIndex === index;
           const config = TAB_CONFIG.find(t => t.routeName === route.name);
           const color = isFocused ? UI_COLORS.accent : UI_COLORS.textMuted;
 
-          const onPress = () => {
-            const event = navigation.emit({
-              type: 'tabPress',
-              target: route.key,
-              canPreventDefault: true,
-            });
-
-            if (!isFocused && !event.defaultPrevented) {
-              navigation.navigate(route.name);
-            }
-          };
-
-          const onLongPress = () => {
-            navigation.emit({
-              type: 'tabLongPress',
-              target: route.key,
-            });
-          };
-
           return (
             <TouchableOpacity
               key={route.key}
-              onPress={onPress}
-              onLongPress={onLongPress}
-              style={styles.tab}
-              activeOpacity={0.7}
+              onPress={() => handlePress(route, isFocused)}
+              onLongPress={() => handleLongPress(route)}
+              style={[styles.tab, isFocused && styles.tabActive]}
+              activeOpacity={1}
             >
-              {config ? (
+              {config && (
                 <>
-                  <TabIcon family={config.family} name={config.iconName} color={color} size={20} />
+                  <TabIcon
+                    family={config.family}
+                    name={config.iconName}
+                    color={color}
+                    size={20}
+                  />
                   <Text
                     style={[
                       styles.label,
@@ -146,7 +155,7 @@ export function FloatingTabBar({ state, navigation }: BottomTabBarProps) {
                     {config.label}
                   </Text>
                 </>
-              ) : null}
+              )}
             </TouchableOpacity>
           );
         })}
@@ -170,26 +179,43 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: PILL_H_PADDING,
     alignItems: 'center',
-    borderWidth: 0.5,
-    shadowOffset: { width: 0, height: 8 },
+    borderWidth: 0,
+  },
+  pillShadow: {
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.12,
-    shadowRadius: 12,
-    elevation: 4,
+    shadowRadius: 16,
+    elevation: 6,
   },
   indicator: {
     position: 'absolute',
-    top: 6,
-    bottom: 6,
-    borderRadius: 28,
-    borderWidth: 0.5,
+    top: 5,
+    bottom: 5,
+    borderRadius: 30,
+    borderWidth: 0,
+  },
+  indicatorPressed: {
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 2,
   },
   tab: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 6,
-    gap: 1,
+    paddingVertical: 8,
+    gap: 2,
     zIndex: 1,
+  },
+  tabActive: {
+    borderRadius: 28,
+    shadowColor: '#FFFFFF',
+    shadowOffset: { width: 0, height: -1 },
+    shadowOpacity: 0.6,
+    shadowRadius: 2,
   },
   label: {
     fontSize: 9,
