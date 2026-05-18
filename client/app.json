@@ -53,7 +53,8 @@
       "@react-native-google-signin/google-signin",
       "expo-font",
       "expo-secure-store",
-      "@react-native-community/datetimepicker"
+      "@react-native-community/datetimepicker",
+      "./plugins/withTransactionTooLargeFix"
     ],
     "experiments": {
       "typedRoutes": true,

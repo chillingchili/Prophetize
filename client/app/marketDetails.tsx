@@ -15,7 +15,7 @@ import { CreateMarketField } from '@/components/market/create-market-field';
 import { CreateMarketChipGroup } from '@/components/market/create-market-chip-group';
 import { ExploreTheme } from "../constants/explore-theme";
 import { useUserStore } from '@/context/useUserStore';
-import { UI_COLORS, UI_SHADOWS, UI_TYPE_SCALE } from '@/constants/ui-tokens';
+import { UI_COLORS, UI_SHADOWS, UI_TYPE_SCALE, useUITheme } from '@/constants/ui-tokens';
 import { EmptyState } from '@/components/common/empty-state';
 import { MarketUpdatedPayload, PortfolioUpdatedPayload, subscribeRealtime } from '@/context/realtimeClient';
 import { useAuth } from '@/context/AuthContext';
@@ -30,26 +30,34 @@ const TIMEFRAME_OPTIONS: { label: string; value: api.MarketHistoryTimeframe }[] 
 ];
 
 const BUTTON_STATE_TOKENS = {
-  active: {
-    backgroundColor: UI_COLORS.accentSoft,
-    borderColor: UI_COLORS.accentBorder,
-    textColor: UI_COLORS.linkPressed,
+  get active() {
+    return {
+      get backgroundColor() { return UI_COLORS.accentSoft; },
+      get borderColor() { return UI_COLORS.accentBorder; },
+      get textColor() { return UI_COLORS.linkPressed; },
+    };
   },
-  inactive: {
-    backgroundColor: UI_COLORS.surface,
-    borderColor: UI_COLORS.borderSoft,
-    textColor: ExploreTheme.titleText,
+  get inactive() {
+    return {
+      get backgroundColor() { return UI_COLORS.surface; },
+      get borderColor() { return UI_COLORS.borderSoft; },
+      get textColor() { return ExploreTheme.titleText; },
+    };
   },
-  disabledOpacity: 0.6,
-  primary: {
-    backgroundColor: UI_COLORS.accent,
-    textColor: UI_COLORS.surface,
-    disabledBackgroundColor: UI_COLORS.borderMuted,
+  get disabledOpacity() { return 0.6; },
+  get primary() {
+    return {
+      get backgroundColor() { return UI_COLORS.accent; },
+      get textColor() { return UI_COLORS.surface; },
+      get disabledBackgroundColor() { return UI_COLORS.borderMuted; },
+    };
   },
-  success: {
-    backgroundColor: UI_COLORS.success,
-    textColor: UI_COLORS.surface,
-    disabledBackgroundColor: UI_COLORS.borderMuted,
+  get success() {
+    return {
+      get backgroundColor() { return UI_COLORS.success; },
+      get textColor() { return UI_COLORS.surface; },
+      get disabledBackgroundColor() { return UI_COLORS.borderMuted; },
+    };
   },
 };
 type CreateFieldKey = 'title' | 'description' | 'category' | 'resolutionDate' | 'outcomes';
@@ -202,6 +210,7 @@ const parseLocalDateKey = (value: string) => {
 
 
 export default function DetailsScreen() {
+  useUITheme();
   const { id, mode } = useLocalSearchParams<{ id?: string; mode?: string }>();
   const marketID = id ? Number(id) : null;
   const hasRouteId = typeof id === 'string' && id.trim().length > 0;

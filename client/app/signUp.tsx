@@ -8,11 +8,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as api from '../utils/api';
 import InputField from '@/components/auth/input-field';
 import GoogleLogin from "@/components/auth/google-login";
-import { UI_COLORS } from '@/constants/ui-tokens';
+import { UI_COLORS, useUITheme } from '@/constants/ui-tokens';
 
 
 
 export default function SignUpScreen() {
+  useUITheme();
     const { width, height } = useWindowDimensions();
     const router = useRouter();
     const [loading, setLoading] = useState(false);

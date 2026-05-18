@@ -15,7 +15,7 @@ import CategoryCard from '@/components/explore/category-card';
 import PredictionCard from '@/components/explore/prediction-card';
 import { EmptyState } from '@/components/common/empty-state';
 import { ExploreTheme } from '../../constants/explore-theme';
-import { UI_COLORS } from '@/constants/ui-tokens';
+import { UI_COLORS, useUITheme } from '@/constants/ui-tokens';
 import { useNotificationBadge } from '../../context/NotificationBadgeContext';
 
 // ─── Category display config ────────────────────────────────────────────────
@@ -56,6 +56,7 @@ function SectionHeader({
 
 // ─── Main screen ─────────────────────────────────────────────────────────────
 export default function ExploreScreen() {
+  useUITheme();
     const router = useRouter();
     const { userData } = useUserStore();
     const { unreadCount } = useNotificationBadge();

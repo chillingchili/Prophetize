@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, Pressable, Switch, ScrollView, Alert } from 'react-native';
+import { View, Text, Pressable, Switch, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, Stack } from 'expo-router';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAppTheme } from '@/hooks/use-app-theme';
 import { useTheme } from '@/context/ThemeContext';
 import { useFocusEffect } from '@react-navigation/native';
+import ConfirmModal from '@/components/common/confirm-modal';
 
 const PUSH_KEY = '@app_settings_push_notifications';
 const COMPACT_KEY = '@app_settings_compact_numbers';
@@ -18,6 +19,7 @@ export default function AppSettingsScreen() {
 
   const [pushEnabled, setPushEnabled] = useState(true);
   const [compactEnabled, setCompactEnabled] = useState(false);
+  const [showResetModal, setShowResetModal] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -54,29 +56,21 @@ export default function AppSettingsScreen() {
   };
 
   const handleReset = () => {
-    Alert.alert(
-      'Reset All Preferences?',
-      'This will clear all app settings and restore defaults.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Reset',
-          style: 'destructive',
-          onPress: async () => {
-            setPushEnabled(true);
-            setCompactEnabled(false);
-            try {
-              await AsyncStorage.removeItem(PUSH_KEY);
-              await AsyncStorage.removeItem(COMPACT_KEY);
-              await AsyncStorage.removeItem('@app_theme_dark_mode');
-              await toggleDarkMode(false);
-            } catch {
-              // ignore
-            }
-          },
-        },
-      ]
-    );
+    setShowResetModal(true);
+  };
+
+  const handleConfirmReset = async () => {
+    setShowResetModal(false);
+    setPushEnabled(true);
+    setCompactEnabled(false);
+    try {
+      await AsyncStorage.removeItem(PUSH_KEY);
+      await AsyncStorage.removeItem(COMPACT_KEY);
+      await AsyncStorage.removeItem('@app_theme_dark_mode');
+      await toggleDarkMode(false);
+    } catch {
+      // ignore
+    }
   };
 
   const renderToggleRow = (
@@ -103,7 +97,7 @@ export default function AppSettingsScreen() {
       <Stack.Screen options={{ title: 'App Settings', headerShown: false }} />
 
       <View className="flex-row items-center px-5 py-4">
-        <Pressable onPress={() => router.back()} hitSlop={10}>
+        <Pressable onPress={() => router.back()} hitSlop={10} accessibilityLabel="Go back" accessibilityRole="button">
           <MaterialIcons name="chevron-left" size={28} color={theme.textPrimary} />
         </Pressable>
         <Text className="font-grotesk-bold text-[18px] ml-2" style={{ color: theme.textPrimary }}>
@@ -152,12 +146,24 @@ export default function AppSettingsScreen() {
             borderWidth: 1,
             borderColor: theme.danger,
           }}
+          accessibilityRole="button"
+          accessibilityLabel="Reset All Preferences"
         >
           <Text className="font-grotesk-bold text-[15px]" style={{ color: theme.danger }}>
             Reset All Preferences
           </Text>
         </Pressable>
       </ScrollView>
+
+      <ConfirmModal
+        visible={showResetModal}
+        title="Reset All Preferences?"
+        message="This will clear all app settings and restore defaults."
+        confirmLabel="Reset"
+        destructive
+        onConfirm={handleConfirmReset}
+        onCancel={() => setShowResetModal(false)}
+      />
     </SafeAreaView>
   );
 }

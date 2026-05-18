@@ -14,9 +14,9 @@ type Props = {
 };
 
 const SIZE_MAP = {
-  small: { container: 40, icon: 20, radius: 14 },
-  medium: { container: 48, icon: 24, radius: 16 },
-  large: { container: 56, icon: 24, radius: 18 },
+  small: { container: 40, icon: 20, radius: 12 },
+  medium: { container: 56, icon: 24, radius: 16 },
+  large: { container: 96, icon: 28, radius: 28 },
 };
 
 export default function Fab({ onPress, icon = 'add', size = 'large', style }: Props) {

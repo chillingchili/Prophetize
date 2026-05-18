@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, Pressable, TextInput, ScrollView, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, Pressable, TextInput, ScrollView, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, Stack } from 'expo-router';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useAppTheme } from '@/hooks/use-app-theme';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/utils/supabase';
+import ConfirmModal from '@/components/common/confirm-modal';
 
 export default function SecurityScreen() {
   const router = useRouter();
@@ -18,6 +19,7 @@ export default function SecurityScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [showLogoutAllModal, setShowLogoutAllModal] = useState(false);
 
   const validate = () => {
     setError('');
@@ -57,20 +59,12 @@ export default function SecurityScreen() {
   };
 
   const handleLogoutAll = () => {
-    Alert.alert(
-      'Log Out All Devices?',
-      'You will be signed out everywhere.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Log Out',
-          style: 'destructive',
-          onPress: async () => {
-            await logout();
-          },
-        },
-      ]
-    );
+    setShowLogoutAllModal(true);
+  };
+
+  const handleConfirmLogoutAll = async () => {
+    setShowLogoutAllModal(false);
+    await logout();
   };
 
   const inputStyle = {
@@ -89,7 +83,7 @@ export default function SecurityScreen() {
       <Stack.Screen options={{ title: 'Security', headerShown: false }} />
 
       <View className="flex-row items-center px-5 py-4">
-        <Pressable onPress={() => router.back()} hitSlop={10}>
+        <Pressable onPress={() => router.back()} hitSlop={10} accessibilityLabel="Go back" accessibilityRole="button">
           <MaterialIcons name="chevron-left" size={28} color={theme.textPrimary} />
         </Pressable>
         <Text className="font-grotesk-bold text-[18px] ml-2" style={{ color: theme.textPrimary }}>
@@ -168,11 +162,13 @@ export default function SecurityScreen() {
               backgroundColor: theme.accent,
               opacity: loading ? 0.7 : 1,
             }}
+            accessibilityRole="button"
+            accessibilityLabel={loading ? 'Updating password' : 'Update Password'}
           >
             {loading ? (
               <ActivityIndicator color="#FFFFFF" />
             ) : (
-              <Text className="font-grotesk-bold text-[15px]" style={{ color: '#FFFFFF' }}>
+              <Text className="font-grotesk-bold text-[15px]" style={{ color: theme.surface }}>
                 Update Password
               </Text>
             )}
@@ -195,6 +191,8 @@ export default function SecurityScreen() {
               borderWidth: 1,
               borderColor: theme.danger,
             }}
+            accessibilityRole="button"
+            accessibilityLabel="Log Out All Devices"
           >
             <Text className="font-grotesk-bold text-[15px]" style={{ color: theme.danger }}>
               Log Out All Devices
@@ -204,6 +202,16 @@ export default function SecurityScreen() {
 
         <View className="mb-10" />
       </ScrollView>
+
+      <ConfirmModal
+        visible={showLogoutAllModal}
+        title="Log Out All Devices?"
+        message="You will be signed out everywhere."
+        confirmLabel="Log Out"
+        destructive
+        onConfirm={handleConfirmLogoutAll}
+        onCancel={() => setShowLogoutAllModal(false)}
+      />
     </SafeAreaView>
   );
 }

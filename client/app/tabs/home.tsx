@@ -18,10 +18,11 @@ import { PortfolioUpdatedPayload, subscribeRealtime } from '../../context/realti
 import { useNotificationBadge } from '../../context/NotificationBadgeContext';
 import categories from "../../constants/categories";
 import { ExploreTheme } from "../../constants/explore-theme";
-import { UI_COLORS } from '@/constants/ui-tokens';
+import { UI_COLORS, useUITheme } from '@/constants/ui-tokens';
 import { normalizePrediction } from '../../utils/prediction-helpers';
 
 export default function HomeScreen() {
+  useUITheme();
 
     const router = useRouter();
     const tabBarHeight = useBottomTabBarHeight();

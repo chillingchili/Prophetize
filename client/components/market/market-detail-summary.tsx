@@ -46,7 +46,7 @@ export default function MarketDetailSummary({ prediction, userPosition = null, u
 
     return (
         <View
-            className="mx-4 rounded-3xl overflow-hidden"
+            className="mx-4 rounded-xl overflow-hidden"
             style={{
                 backgroundColor: UI_COLORS.surface,
                 ...UI_SHADOWS.soft,

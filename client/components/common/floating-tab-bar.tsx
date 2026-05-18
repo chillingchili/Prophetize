@@ -6,7 +6,8 @@ import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Feather from '@expo/vector-icons/Feather';
-import { UI_COLORS } from '@/constants/ui-tokens';
+import { UI_COLORS, useUITheme } from '@/constants/ui-tokens';
+import { useTheme } from '@/context/ThemeContext';
 
 type IconFamily = 'MaterialIcons' | 'Ionicons' | 'Feather';
 
@@ -38,6 +39,8 @@ function TabIcon({ family, name, color, size }: { family: IconFamily; name: stri
 
 export function FloatingTabBar({ state, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
+  useUITheme();
+  useTheme();
   const [pillWidth, setPillWidth] = useState(0);
   const indicatorOffset = useSharedValue(0);
   const indicatorWidthSV = useSharedValue(0);
@@ -108,34 +111,33 @@ export function FloatingTabBar({ state, navigation }: BottomTabBarProps) {
           styles.pill,
           {
             backgroundColor: UI_COLORS.surface,
-            borderColor: UI_COLORS.borderSoft,
+            borderColor: UI_COLORS.accentBorder,
           },
           styles.pillShadow,
         ]}
         onLayout={onPillLayout}
       >
-        {pillWidth > 0 && (
-          <Animated.View
-            style={[
-              styles.indicator,
-              { backgroundColor: UI_COLORS.accentSoft },
-              indicatorStyle,
-              styles.indicatorPressed,
-            ]}
-          />
-        )}
+          {pillWidth > 0 && (
+            <Animated.View
+              style={[
+                styles.indicator,
+                { backgroundColor: UI_COLORS.accent },
+                indicatorStyle,
+              ]}
+            />
+          )}
         {visibleTabs.map((route, index) => {
           const isFocused = activeIndex === index;
           const config = TAB_CONFIG.find(t => t.routeName === route.name);
-          const color = isFocused ? UI_COLORS.accent : UI_COLORS.textMuted;
+          const color = isFocused ? '#FFFFFF' : UI_COLORS.textMuted;
 
           return (
             <TouchableOpacity
               key={route.key}
               onPress={() => handlePress(route, isFocused)}
               onLongPress={() => handleLongPress(route)}
-              style={[styles.tab, isFocused && styles.tabActive]}
-              activeOpacity={1}
+              style={styles.tab}
+              activeOpacity={0.7}
             >
               {config && (
                 <>
@@ -175,47 +177,33 @@ const styles = StyleSheet.create({
   },
   pill: {
     flexDirection: 'row',
-    borderRadius: 36,
-    paddingVertical: 10,
+    borderRadius: 24,
+    paddingVertical: 8,
     paddingHorizontal: PILL_H_PADDING,
     alignItems: 'center',
-    borderWidth: 0,
+    borderWidth: 1,
   },
   pillShadow: {
     shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.12,
-    shadowRadius: 16,
-    elevation: 6,
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.15,
+    shadowRadius: 24,
+    elevation: 8,
   },
   indicator: {
     position: 'absolute',
     top: 5,
     bottom: 5,
-    borderRadius: 30,
+    borderRadius: 24,
     borderWidth: 0,
-  },
-  indicatorPressed: {
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: 2,
   },
   tab: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 8,
+    paddingVertical: 6,
     gap: 2,
     zIndex: 1,
-  },
-  tabActive: {
-    borderRadius: 28,
-    shadowColor: '#FFFFFF',
-    shadowOffset: { width: 0, height: -1 },
-    shadowOpacity: 0.6,
-    shadowRadius: 2,
   },
   label: {
     fontSize: 9,

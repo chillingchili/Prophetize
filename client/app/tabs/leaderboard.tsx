@@ -9,8 +9,9 @@ import LeaderboardSegment, { LeaderboardPeriod } from '@/components/leaderboard/
 import LeaderboardSkeletonList from '@/components/leaderboard/leaderboard-skeleton-list';
 import { ExploreTheme } from '@/constants/explore-theme';
 import { useAuth } from '@/context/AuthContext';
+import { useTheme } from '@/context/ThemeContext';
 import { subscribeRealtime } from '@/context/realtimeClient';
-import { UI_COLORS, UI_TYPE_SCALE } from '@/constants/ui-tokens';
+import { UI_COLORS, UI_TYPE_SCALE, useUITheme, getThemeVersion } from '@/constants/ui-tokens';
 import {
     LeaderboardApiEntry,
     MyLeaderboardPositionResponse,
@@ -62,6 +63,8 @@ const mapMyPositionToRow = (position: MyLeaderboardPositionResponse): Leaderboar
 });
 
 export default function LeaderboardScreen() {
+  useUITheme();
+  useTheme();
     const { token } = useAuth();
 
     const [period, setPeriod] = useState<LeaderboardPeriod>('weekly');
@@ -270,6 +273,7 @@ export default function LeaderboardScreen() {
                     ) : (
                         <FlatList
                             data={listEntries}
+                            extraData={getThemeVersion()}
                             keyExtractor={(item) => `${period}-${item.rank}-${item.username}`}
                             renderItem={({ item }) => <LeaderboardRow item={item} />}
                             onEndReached={handleLoadMore}
@@ -289,7 +293,7 @@ export default function LeaderboardScreen() {
                             position: 'absolute',
                             left: 20,
                             right: 20,
-                            bottom: 90,
+                            bottom: 120,
                         }}
                     >
                         <LeaderboardMyPositionCard item={myPosition} />

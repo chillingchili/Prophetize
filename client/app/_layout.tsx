@@ -82,8 +82,8 @@ function RootLayout() {
   }
 
   return (
-    <NotificationBadgeProvider key={colorScheme}>
-      <Stack key={colorScheme}>
+    <NotificationBadgeProvider>
+      <Stack>
         <Stack.Screen name="index" options={{ title: 'Prophetize', headerShown: false }} />
         <Stack.Screen name="login" options={{ title: 'Login', headerShown: false }} />
         <Stack.Screen name="signUp" options={{ title: 'signUp', headerShown: false }} />

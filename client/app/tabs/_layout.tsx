@@ -28,7 +28,7 @@ export default function TabsLayout(){
     if (!token) return null;
 
   return (
-    <Tabs key={colorScheme} tabBar={(props) => <FloatingTabBar key={`tab-bar-${colorScheme}`} {...props} />}>
+    <Tabs tabBar={(props) => <FloatingTabBar {...props} />}>
         <Tabs.Screen name="home" options={{ title: 'Home', headerShown: false }} />
         <Tabs.Screen name="explore" options={{ title: 'Explore', headerShown: false }} />
         <Tabs.Screen name="leaderboard" options={{ title: 'Leaderboard', headerShown: false }} />

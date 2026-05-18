@@ -82,7 +82,7 @@ export default function SearchHeader({
                             >
                                 <Text
                                     style={{
-                                        color: '#FFFFFF',
+                                        color: UI_COLORS.surface,
                                         fontSize: 10,
                                         fontWeight: '700',
                                         lineHeight: 14,

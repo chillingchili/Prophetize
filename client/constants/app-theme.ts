@@ -24,6 +24,16 @@ export interface AppTheme {
   accentPressed: string;
   accentSoft: string;
   accentBorder: string;
+  secondary: string;
+  secondaryPressed: string;
+  secondarySoft: string;
+  secondaryContainer: string;
+  onSecondaryContainer: string;
+  tertiary: string;
+  tertiaryPressed: string;
+  tertiarySoft: string;
+  tertiaryContainer: string;
+  onTertiaryContainer: string;
   info: string;
   warning: string;
   success: string;
@@ -143,6 +153,16 @@ export const AppThemeLight: AppTheme = {
   accentPressed: '#0E7490',
   accentSoft: 'rgba(8, 145, 178, 0.12)',
   accentBorder: '#9CDDEA',
+  secondary: '#D97706',
+  secondaryPressed: '#B45309',
+  secondarySoft: 'rgba(217, 119, 6, 0.12)',
+  secondaryContainer: '#FFFBEB',
+  onSecondaryContainer: '#78350F',
+  tertiary: '#7C3AED',
+  tertiaryPressed: '#6D28D9',
+  tertiarySoft: 'rgba(124, 58, 237, 0.12)',
+  tertiaryContainer: '#F5F3FF',
+  onTertiaryContainer: '#4C1D95',
   info: '#7AD9ED',
   warning: '#F59E0B',
   success: '#10B981',
@@ -262,6 +282,16 @@ export const AppThemeDark: AppTheme = {
   accentPressed: '#1F9CB9',
   accentSoft: 'rgba(43, 181, 214, 0.16)',
   accentBorder: '#1F7A8C',
+  secondary: '#FBBF24',
+  secondaryPressed: '#F59E0B',
+  secondarySoft: 'rgba(251, 191, 36, 0.16)',
+  secondaryContainer: '#2D1A00',
+  onSecondaryContainer: '#FDE68A',
+  tertiary: '#A78BFA',
+  tertiaryPressed: '#8B5CF6',
+  tertiarySoft: 'rgba(167, 139, 250, 0.16)',
+  tertiaryContainer: '#2E1065',
+  onTertiaryContainer: '#DDD6FE',
   info: '#38BDF8',
   warning: '#FBBF24',
   success: '#05C46B',

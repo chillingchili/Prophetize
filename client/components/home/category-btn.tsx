@@ -30,7 +30,7 @@ export default function CategoryBtn({label, isActive, onPress}:Props) {
             >
             <Text
             className="font-grotesk-bold text-[14px]"
-            style={{ color: isActive ? '#FFFFFF' : ExploreTheme.secondaryText }}
+            style={{ color: isActive ? UI_COLORS.surface : ExploreTheme.secondaryText }}
             >
                 {label}
             </Text>

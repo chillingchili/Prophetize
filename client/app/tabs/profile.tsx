@@ -7,9 +7,10 @@ import { useFocusEffect } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
 
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '@/context/ThemeContext';
 import { useUserStore } from '../../context/useUserStore';
 
-import { UI_COLORS } from '@/constants/ui-tokens';
+import { UI_COLORS, useUITheme } from '@/constants/ui-tokens';
 import * as api from '@/utils/api';
 
 import { ProfileHeader } from '@/components/profile/profile-header';
@@ -17,6 +18,7 @@ import { ProfileStats } from '@/components/profile/profile-stats';
 import { CreatedMarketsSection } from '@/components/profile/created-markets-section';
 import { ActivitySection } from '@/components/profile/activity-section';
 import { SettingsItem } from '@/components/profile/settings-item';
+import ConfirmModal from '@/components/common/confirm-modal';
 
 const CREATED_MARKETS_LIMIT = 6;
 const ACTIVITIES_LIMIT = 6;
@@ -54,6 +56,8 @@ const getPayloadArray = (payload: unknown): Record<string, unknown>[] => {
 };
 
 export default function ProfileScreen() {
+  useUITheme();
+  useTheme();
   const router = useRouter();
   const { userId: routeUserId, initialFollowing } = useLocalSearchParams<{ userId?: string; initialFollowing?: string }>();
   const { logout, user } = useAuth();
@@ -69,6 +73,7 @@ export default function ProfileScreen() {
   const [isFollowing, setIsFollowing] = useState(initialFollowing === '1');
   const [followLoading, setFollowLoading] = useState(false);
   const [followErrorMessage, setFollowErrorMessage] = useState<string | null>(null);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const lastFetchRef = useRef(0);
 
@@ -207,21 +212,13 @@ export default function ProfileScreen() {
 
   const handleLogout = useCallback(async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    Alert.alert(
-      'Log Out',
-      'Are you sure you want to log out?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Log Out',
-          style: 'destructive',
-          onPress: async () => {
-            await logout();
-            router.replace('/');
-          },
-        },
-      ]
-    );
+    setShowLogoutModal(true);
+  }, []);
+
+  const handleConfirmLogout = useCallback(async () => {
+    setShowLogoutModal(false);
+    await logout();
+    router.replace('/');
   }, [logout, router]);
 
   const displayName = isOwnProfile
@@ -453,6 +450,8 @@ export default function ProfileScreen() {
                 borderWidth: 1,
                 borderColor: UI_COLORS.profileStat.logoutBorder,
               }}
+              accessibilityRole="button"
+              accessibilityLabel="Log Out"
             >
               <Text
                 className="font-grotesk-bold text-[14px]"
@@ -463,7 +462,18 @@ export default function ProfileScreen() {
             </Pressable>
           </View>
         ) : null}
+
       </ScrollView>
+
+      <ConfirmModal
+        visible={showLogoutModal}
+        title="Log Out"
+        message="Are you sure you want to log out?"
+        confirmLabel="Log Out"
+        destructive
+        onConfirm={handleConfirmLogout}
+        onCancel={() => setShowLogoutModal(false)}
+      />
     </SafeAreaView>
   );
 }

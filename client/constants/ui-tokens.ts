@@ -3,11 +3,17 @@ import React from 'react';
 
 type Theme = 'light' | 'dark';
 let activeTheme: Theme = 'light';
+let themeVersion = 0;
 const listeners = new Set<() => void>();
 
 export function _setTheme(theme: Theme) {
   activeTheme = theme;
+  themeVersion++;
   listeners.forEach(fn => fn());
+}
+
+export function getThemeVersion() {
+  return themeVersion;
 }
 
 const lightTheme = {
@@ -38,6 +44,16 @@ const lightTheme = {
   outcomeYesSoft: 'rgba(5, 150, 105, 0.12)',
   outcomeNo: '#DC2626',
   outcomeNoSoft: 'rgba(220, 38, 38, 0.12)',
+  secondary: '#D97706',
+  secondaryPressed: '#B45309',
+  secondarySoft: 'rgba(217, 119, 6, 0.12)',
+  secondaryContainer: '#FFFBEB',
+  onSecondaryContainer: '#78350F',
+  tertiary: '#7C3AED',
+  tertiaryPressed: '#6D28D9',
+  tertiarySoft: 'rgba(124, 58, 237, 0.12)',
+  tertiaryContainer: '#F5F3FF',
+  onTertiaryContainer: '#4C1D95',
   primaryContainer: '#A6F1FF',
   onPrimaryContainer: '#002028',
   createMarket: {
@@ -151,6 +167,16 @@ const darkTheme: typeof lightTheme = {
   outcomeYesSoft: AppThemeDark.outcomeYesSoft,
   outcomeNo: AppThemeDark.outcomeNo,
   outcomeNoSoft: AppThemeDark.outcomeNoSoft,
+  secondary: AppThemeDark.secondary,
+  secondaryPressed: AppThemeDark.secondaryPressed,
+  secondarySoft: AppThemeDark.secondarySoft,
+  secondaryContainer: AppThemeDark.secondaryContainer,
+  onSecondaryContainer: AppThemeDark.onSecondaryContainer,
+  tertiary: AppThemeDark.tertiary,
+  tertiaryPressed: AppThemeDark.tertiaryPressed,
+  tertiarySoft: AppThemeDark.tertiarySoft,
+  tertiaryContainer: AppThemeDark.tertiaryContainer,
+  onTertiaryContainer: AppThemeDark.onTertiaryContainer,
   primaryContainer: AppThemeDark.primaryContainer,
   onPrimaryContainer: AppThemeDark.onPrimaryContainer,
   createMarket: AppThemeDark.createMarket,
@@ -218,6 +244,56 @@ export const UI_TYPE_SCALE = {
     helper: 12,
   },
 };
+
+/** MD3 shape tokens (border-radius) */
+export const MD3_SHAPE = {
+  sm: 4,
+  md: 8,
+  lg: 12,
+  xl: 16,
+  xxl: 28,
+  full: 9999,
+} as const;
+
+/** MD3 elevation tokens (iOS shadow mapping) */
+export const MD3_ELEVATION = {
+  level0: {},
+  level1: {
+    shadowColor: '#191C1D',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 3,
+    elevation: 1,
+  },
+  level2: {
+    shadowColor: '#191C1D',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.10,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  level3: {
+    shadowColor: '#191C1D',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.10,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  level4: {
+    shadowColor: '#191C1D',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.10,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  level5: {
+    shadowColor: '#191C1D',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.10,
+    shadowRadius: 16,
+    elevation: 12,
+  },
+} as const;
 
 export const UI_SHADOWS = {
   soft: {

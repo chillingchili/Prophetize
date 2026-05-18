@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { ExploreTheme } from '@/constants/explore-theme';
-import { UI_COLORS } from '@/constants/ui-tokens';
+import { UI_COLORS, useUITheme } from '@/constants/ui-tokens';
 import * as api from '@/utils/api';
 import { useNotificationBadge } from '@/context/NotificationBadgeContext';
 
@@ -18,6 +18,7 @@ const toFollowErrorMessage = (value: unknown): string => {
 };
 
 export default function NotificationsScreen() {
+  useUITheme();
   const router = useRouter();
   const { resetUnreadCount } = useNotificationBadge();
   const [items, setItems] = useState<api.NotificationInboxItem[]>([]);

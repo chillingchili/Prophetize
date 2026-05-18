@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prophetize · MD3 Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* MD3 Primary — Cyan-leaning teal */
+    --md-primary: #006B7A;
+    --md-on-primary: #FFFFFF;
+    --md-primary-container: #A6F0FF;
+    --md-on-primary-container: #001F25;
+    --md-secondary: #4A6268;
+    --md-on-secondary: #FFFFFF;
+    --md-secondary-container: #CDE7EE;
+    --md-on-secondary-container: #051F24;
+    --md-tertiary: #9A4150;
+    --md-on-tertiary: #FFFFFF;
+    --md-tertiary-container: #FFD9DD;
+    --md-on-tertiary-container: #400012;
+    --md-error: #BA1A1A;
+    --md-on-error: #FFFFFF;
+    --md-error-container: #FFDAD6;
+    --md-on-error-container: #410002;
+    --md-background: #FBFCFD;
+    --md-on-background: #191C1D;
+    --md-surface: #FBFCFD;
+    --md-on-surface: #191C1D;
+    --md-surface-variant: #DBE4E7;
+    --md-on-surface-variant: #3F484B;
+    --md-outline: #6F797C;
+    --md-outline-variant: #BFC8CB;
+    --md-surface-1: #F0F3F4;
+    --md-surface-2: #E8EDEE;
+    --md-surface-3: #E1E7E9;
+    --md-surface-4: #DEE5E7;
+    --md-surface-5: #DBE2E5;
+
+    /* Elevation surface tints (alpha of primary) */
+    --md-elevation-0: 0 0 0 0 rgba(0,107,122,0);
+    --md-elevation-1: 0 1px 3px 1px rgba(0,0,0,0.08), 0 1px 2px 0 rgba(0,0,0,0.04);
+    --md-elevation-2: 0 2px 6px 2px rgba(0,0,0,0.10), 0 1px 2px 0 rgba(0,0,0,0.06);
+    --md-elevation-3: 0 4px 8px 3px rgba(0,0,0,0.10), 0 1px 3px 0 rgba(0,0,0,0.06);
+    --md-elevation-4: 0 6px 12px 4px rgba(0,0,0,0.10), 0 2px 3px 0 rgba(0,0,0,0.06);
+    --md-elevation-5: 0 8px 16px 4px rgba(0,0,0,0.10), 0 4px 8px 0 rgba(0,0,0,0.06);
+
+    /* Shape */
+    --md-shape-sm: 4px;
+    --md-shape-md: 8px;
+    --md-shape-lg: 12px;
+    --md-shape-xl: 16px;
+    --md-shape-2xl: 28px;
+    --md-shape-full: 9999px;
+
+    /* Type */
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'JetBrains Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--md-background);
+    color: var(--md-on-surface);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    padding: 24px;
+  }
+
+  .container {
+    max-width: 420px;
+    margin: 0 auto;
+    position: relative;
+    border-radius: var(--md-shape-xl);
+    overflow: hidden;
+    box-shadow: var(--md-elevation-3);
+    background: var(--md-background);
+  }
+
+  .screen {
+    position: relative;
+    min-height: 780px;
+    overflow: hidden;
+  }
+
+  /* ── Top App Bar ── */
+  .app-bar {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    background: var(--md-surface);
+    box-shadow: var(--md-elevation-1);
+    position: relative;
+    z-index: 2;
+  }
+  .app-bar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--md-primary-container) 0%, transparent 60%);
+    opacity: 0.3;
+    pointer-events: none;
+  }
+  .app-bar h1 {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--md-on-surface);
+    letter-spacing: -0.25px;
+  }
+  .app-bar .sub {
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--md-on-surface-variant);
+    margin-left: 8px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Section ── */
+  .section {
+    padding: 16px 16px 8px;
+  }
+  .section-label {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--md-on-surface-variant);
+    margin-bottom: 12px;
+  }
+
+  /* ── MD3 Card (Elevated) ── */
+  .card-elevated {
+    background: var(--md-surface);
+    border-radius: var(--md-shape-lg);
+    padding: 16px;
+    box-shadow: var(--md-elevation-1);
+    position: relative;
+    transition: box-shadow 0.2s;
+  }
+  .card-elevated:hover {
+    box-shadow: var(--md-elevation-2);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .card-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--md-shape-full);
+    background: var(--md-primary-container);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--md-on-primary-container);
+  }
+  .card-title {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--md-on-surface);
+  }
+  .card-subtitle {
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--md-on-surface-variant);
+  }
+
+  .stat-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .stat-item {
+    flex: 1;
+    padding: 12px;
+    border-radius: var(--md-shape-md);
+    background: var(--md-surface-1);
+    text-align: center;
+  }
+  .stat-value {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--md-on-surface);
+  }
+  .stat-label {
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: var(--md-on-surface-variant);
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .stat-positive { color: #2E7D32; }
+  .stat-negative { color: var(--md-error); }
+
+  /* ── Leaderboard ── */
+  .lb-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding: 0 16px;
+  }
+  .lb-header h2 {
+    font-family: var(--font-display);
+    font-size: 20px;
+    letter-spacing: -0.25px;
+  }
+
+  .segment-group {
+    display: flex;
+    background: var(--md-surface-2);
+    border-radius: var(--md-shape-full);
+    padding: 2px;
+    gap: 2px;
+  }
+  .segment-btn {
+    border: none;
+    background: transparent;
+    padding: 6px 16px;
+    border-radius: var(--md-shape-full);
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--md-on-surface-variant);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .segment-btn.active {
+    background: var(--md-surface);
+    color: var(--md-on-surface);
+    box-shadow: var(--md-elevation-1);
+  }
+
+  .lb-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: var(--md-shape-lg);
+    background: var(--md-surface);
+    box-shadow: var(--md-elevation-1);
+    margin-bottom: 8px;
+  }
+  .lb-row.you {
+    background: linear-gradient(135deg, var(--md-primary-container) 0%, var(--md-surface) 80%);
+    border: 1px solid var(--md-primary-container);
+  }
+  .lb-rank {
+    width: 28px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--md-on-surface-variant);
+    text-align: center;
+  }
+  .lb-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--md-shape-full);
+    background: var(--md-secondary-container);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--md-on-secondary-container);
+  }
+  .lb-info { flex: 1; }
+  .lb-name {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--md-on-surface);
+  }
+  .lb-detail {
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: var(--md-on-surface-variant);
+  }
+  .lb-value {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 700;
+    color: #2E7D32;
+  }
+
+  .podium {
+    display: flex;
+    gap: 8px;
+    padding: 0 16px 16px;
+  }
+  .podium-card {
+    flex: 1;
+    background: var(--md-surface);
+    border-radius: var(--md-shape-lg);
+    padding: 12px;
+    box-shadow: var(--md-elevation-1);
+    text-align: center;
+  }
+  .podium-card.gold { background: #FFF8E1; border: 1px solid #FFD54F; }
+  .podium-card.silver { background: #F5F5F5; border: 1px solid #BDBDBD; }
+  .podium-card.bronze { background: #FFF3E0; border: 1px solid #FFB74D; }
+  .podium-card .rank { font-family: var(--font-display); font-weight: 700; font-size: 24px; }
+  .podium-card .initials { width: 32px; height: 32px; border-radius: var(--md-shape-full); margin: 6px auto; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; font-size: 11px; }
+  .podium-card .un { font-family: var(--font-display); font-size: 11px; font-weight: 700; }
+  .podium-card .pv { font-family: var(--font-display); font-size: 12px; font-weight: 700; color: #2E7D32; }
+
+  /* ── FAB ── */
+  .fab {
+    position: absolute;
+    right: 20px;
+    bottom: 100px;
+    width: 56px;
+    height: 56px;
+    border-radius: var(--md-shape-xl);
+    background: var(--md-primary-container);
+    border: none;
+    box-shadow: var(--md-elevation-3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: box-shadow 0.2s, transform 0.2s;
+    z-index: 10;
+  }
+  .fab:hover {
+    box-shadow: var(--md-elevation-4);
+    transform: scale(1.04);
+  }
+  .fab:active {
+    box-shadow: var(--md-elevation-5);
+    transform: scale(0.96);
+  }
+  .fab-icon {
+    font-size: 28px;
+    line-height: 1;
+    color: var(--md-on-primary-container);
+    font-weight: 300;
+  }
+
+  /* ── Bottom Nav (MD3 Elevated) ── */
+  .bottom-nav {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+    display: flex;
+    background: var(--md-surface);
+    border-radius: var(--md-shape-2xl);
+    padding: 6px;
+    box-shadow: var(--md-elevation-2);
+    z-index: 5;
+  }
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 0 4px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+    border-radius: var(--md-shape-full);
+    transition: all 0.25s;
+  }
+  .nav-item .icon {
+    font-size: 22px;
+    line-height: 1;
+    color: var(--md-on-surface-variant);
+    transition: color 0.25s;
+  }
+  .nav-item .label {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--md-on-surface-variant);
+    letter-spacing: 0.5px;
+    transition: color 0.25s;
+  }
+  .nav-item.active {
+    background: var(--md-secondary-container);
+  }
+  .nav-item.active .icon,
+  .nav-item.active .label {
+    color: var(--md-on-secondary-container);
+  }
+
+  /* ── Dialog Modal ── */
+  .dialog-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(25,28,29,0.32);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    backdrop-filter: blur(2px);
+  }
+  .dialog {
+    background: var(--md-surface);
+    border-radius: var(--md-shape-2xl);
+    padding: 24px;
+    width: calc(100% - 64px);
+    max-width: 320px;
+    box-shadow: var(--md-elevation-3);
+    text-align: center;
+  }
+  .dialog h3 {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--md-on-surface);
+    letter-spacing: -0.25px;
+    margin-bottom: 8px;
+  }
+  .dialog p {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--md-on-surface-variant);
+    line-height: 1.6;
+  }
+  .dialog-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 24px;
+    justify-content: flex-end;
+  }
+  .btn {
+    padding: 10px 24px;
+    border-radius: var(--md-shape-full);
+    border: none;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.25px;
+    transition: all 0.15s;
+  }
+  .btn-text {
+    background: transparent;
+    color: var(--md-primary);
+  }
+  .btn-text:hover { background: var(--md-primary-container); }
+  .btn-filled {
+    background: var(--md-primary);
+    color: var(--md-on-primary);
+    box-shadow: var(--md-elevation-1);
+  }
+  .btn-filled:hover { box-shadow: var(--md-elevation-2); }
+  .btn-danger {
+    background: var(--md-error-container);
+    color: var(--md-on-error-container);
+  }
+  .btn-danger:hover { background: var(--md-error); color: var(--md-on-error); }
+
+  /* ── Misc ── */
+  .claim-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 16px 16px;
+  }
+  .claim-card .icon-wrap {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--md-shape-full);
+    background: var(--md-tertiary-container);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: var(--md-on-tertiary-container);
+  }
+  .claim-btn {
+    margin-left: auto;
+    background: var(--md-primary-container);
+    border: none;
+    border-radius: var(--md-shape-full);
+    padding: 8px 20px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--md-on-primary-container);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .claim-btn:hover { background: var(--md-primary); color: var(--md-on-primary); }
+
+  .settings-item {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    gap: 12px;
+    border-bottom: 1px solid var(--md-outline-variant);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .settings-item:last-child { border: none; }
+  .settings-item:hover { background: var(--md-surface-1); }
+  .settings-item .icon { font-size: 20px; color: var(--md-on-surface-variant); }
+  .settings-item .label { flex: 1; font-family: var(--font-display); font-size: 14px; color: var(--md-on-surface); }
+  .settings-item .chevron { font-size: 16px; color: var(--md-outline); }
+
+  .empty-state {
+    padding: 48px 24px;
+    text-align: center;
+  }
+  .empty-state .icon { font-size: 48px; color: var(--md-outline); margin-bottom: 12px; }
+  .empty-state h3 { font-family: var(--font-display); font-size: 16px; color: var(--md-on-surface); }
+  .empty-state p { font-family: var(--font-body); font-size: 12px; color: var(--md-on-surface-variant); margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="screen">
+
+    <!-- Top App Bar -->
+    <div class="app-bar">
+      <h1>Prophetize</h1>
+      <span class="sub">· Weekly</span>
+    </div>
+
+    <!-- Leaderboard Podium -->
+    <div class="section">
+      <div class="section-label">Top Prophets</div>
+    </div>
+    <div class="podium">
+      <div class="podium-card silver">
+        <div class="rank" style="color:#757575">#2</div>
+        <div class="initials" style="background:#E0E0E0">JD</div>
+        <div class="un">JaneD</div>
+        <div class="pv">$12.4K</div>
+      </div>
+      <div class="podium-card gold">
+        <div class="rank" style="color:#F9A825">#1</div>
+        <div class="initials" style="background:#FFD54F">AK</div>
+        <div class="un">AlexK</div>
+        <div class="pv">$18.2K</div>
+      </div>
+      <div class="podium-card bronze">
+        <div class="rank" style="color:#E65100">#3</div>
+        <div class="initials" style="background:#FFB74D">MT</div>
+        <div class="un">MaxT</div>
+        <div class="pv">$9.8K</div>
+      </div>
+    </div>
+
+    <!-- Leaderboard List -->
+    <div style="padding: 0 16px;">
+      <div class="lb-row">
+        <span class="lb-rank">4</span>
+        <div class="lb-avatar">SC</div>
+        <div class="lb-info">
+          <div class="lb-name">SarahC</div>
+          <div class="lb-detail">24 correct picks</div>
+        </div>
+        <span class="lb-value">$7.3K</span>
+      </div>
+      <div class="lb-row">
+        <span class="lb-rank">5</span>
+        <div class="lb-avatar">MR</div>
+        <div class="lb-info">
+          <div class="lb-name">MikeR</div>
+          <div class="lb-detail">21 correct picks</div>
+        </div>
+        <span class="lb-value">$6.1K</span>
+      </div>
+      <div class="lb-row you">
+        <span class="lb-rank">6</span>
+        <div class="lb-avatar" style="background:var(--md-primary-container);color:var(--md-on-primary-container)">YO</div>
+        <div class="lb-info">
+          <div class="lb-name">You <span style="font-family:var(--font-body);font-size:10px;background:var(--md-primary);color:var(--md-on-primary);padding:1px 8px;border-radius:999px;margin-left:4px;">YOU</span></div>
+          <div class="lb-detail">19 correct picks</div>
+        </div>
+        <span class="lb-value">$5.4K</span>
+      </div>
+    </div>
+
+    <!-- Daily Claim Card -->
+    <div style="margin-top: 20px;">
+      <div class="section-label" style="padding:0 16px;">Rewards</div>
+      <div class="claim-card card-elevated">
+        <div class="icon-wrap">🎁</div>
+        <div>
+          <div style="font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--md-on-surface);">Daily Login Bonus</div>
+          <div style="font-family:var(--font-body);font-size:11px;color:var(--md-on-surface-variant);">+15 P-coins</div>
+        </div>
+        <button class="claim-btn">Claim</button>
+      </div>
+    </div>
+
+    <!-- Empty State (for reference) -->
+    <div class="empty-state">
+      <div class="icon">📊</div>
+      <h3>No predictions yet</h3>
+      <p>Start exploring markets to make your first pick.</p>
+    </div>
+
+    <!-- FAB -->
+    <button class="fab" title="Create market">
+      <span class="fab-icon">+</span>
+    </button>
+
+    <!-- Logout Dialog -->
+    <div class="dialog-overlay" id="dialogOverlay">
+      <div class="dialog">
+        <h3>Log Out</h3>
+        <p>Are you sure you want to log out? You will need to sign in again to access your account.</p>
+        <div class="dialog-actions">
+          <button class="btn btn-text" onclick="closeDialog()">Cancel</button>
+          <button class="btn btn-danger" onclick="closeDialog()">Log Out</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+      <button class="nav-item">
+        <span class="icon">🏠</span>
+        <span class="label">Home</span>
+      </button>
+      <button class="nav-item active">
+        <span class="icon">🔍</span>
+        <span class="label">Explore</span>
+      </button>
+      <button class="nav-item">
+        <span class="icon">🏆</span>
+        <span class="label">Board</span>
+      </button>
+      <button class="nav-item">
+        <span class="icon">👤</span>
+        <span class="label">Profile</span>
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Legend / Key changes -->
+<div style="max-width:420px;margin:24px auto 0;padding:20px;background:var(--md-surface-1);border-radius:var(--md-shape-lg);">
+  <h3 style="font-family:var(--font-display);font-size:15px;margin-bottom:12px;color:var(--md-on-surface);">MD3 Changes Applied</h3>
+  <table style="width:100%;font-size:12px;border-collapse:collapse;">
+    <tr style="border-bottom:1px solid var(--md-outline-variant);">
+      <th style="text-align:left;padding:6px 0;font-family:var(--font-display);">Element</th>
+      <th style="text-align:left;padding:6px 0;font-family:var(--font-display);">Before</th>
+      <th style="text-align:left;padding:6px 0;font-family:var(--font-display);">After (MD3)</th>
+    </tr>
+    <tr style="border-bottom:1px solid var(--md-outline-variant);">
+      <td style="padding:6px 0;">Bottom nav shape</td>
+      <td style="padding:6px 0;color:var(--md-error);">24px radius, full-height indicator</td>
+      <td style="padding:6px 0;color:#2E7D32;">28px (rounded-2xl), circular indicator behind icon</td>
+    </tr>
+    <tr style="border-bottom:1px solid var(--md-outline-variant);">
+      <td style="padding:6px 0;">Dialog shape</td>
+      <td style="padding:6px 0;color:var(--md-error);">24px (rounded-3xl)</td>
+      <td style="padding:6px 0;color:#2E7D32;">28px (rounded-2xl)</td>
+    </tr>
+    <tr style="border-bottom:1px solid var(--md-outline-variant);">
+      <td style="padding:6px 0;">Dialog backdrop</td>
+      <td style="padding:6px 0;color:var(--md-error);">rgba(4,10,24,0.45) — dark blue tint</td>
+      <td style="padding:6px 0;color:#2E7D32;">onSurface@32% + blur</td>
+    </tr>
+    <tr style="border-bottom:1px solid var(--md-outline-variant);">
+      <td style="padding:6px 0;">Segment control</td>
+      <td style="padding:6px 0;color:var(--md-error);">box shape (rounded-2xl=16px)</td>
+      <td style="padding:6px 0;color:#2E7D32;">pill shape (rounded-full)</td>
+    </tr>
+    <tr style="border-bottom:1px solid var(--md-outline-variant);">
+      <td style="padding:6px 0;">FAB large radius</td>
+      <td style="padding:6px 0;color:var(--md-error);">18px</td>
+      <td style="padding:6px 0;color:#2E7D32;">16px (rounded-xl) — matches MD3 medium FAB</td>
+    </tr>
+    <tr style="border-bottom:1px solid var(--md-outline-variant);">
+      <td style="padding:6px 0;">Button shape</td>
+      <td style="padding:6px 0;color:var(--md-error);">rounded-2xl (16px) / rounded-3xl (24px)</td>
+      <td style="padding:6px 0;color:#2E7D32;">rounded-full for elevated/filled buttons</td>
+    </tr>
+    <tr style="border-bottom:1px solid var(--md-outline-variant);">
+      <td style="padding:6px 0;">Color tokens</td>
+      <td style="padding:6px 0;color:var(--md-error);">accent, danger, borderSoft</td>
+      <td style="padding:6px 0;color:#2E7D32;">primary, error, outline, surfaceVariant</td>
+    </tr>
+    <tr style="border-bottom:1px solid var(--md-outline-variant);">
+      <td style="padding:6px 0;">Tab label size</td>
+      <td style="padding:6px 0;color:var(--md-error);">9px</td>
+      <td style="padding:6px 0;color:#2E7D32;">11px (label-medium)</td>
+    </tr>
+    <tr>
+      <td style="padding:6px 0;">Surface tints</td>
+      <td style="padding:6px 0;color:var(--md-error);">none</td>
+      <td style="padding:6px 0;color:#2E7D32;">surface-1 through surface-5 with elevation shadows</td>
+    </tr>
+  </table>
+</div>
+
+<script>
+  function closeDialog() {
+    document.getElementById('dialogOverlay').style.display = 'none';
+  }
+  // Make nav items toggleable
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      item.classList.add('active');
+    });
+  });
+  // Segment toggle
+  document.querySelectorAll('.segment-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>

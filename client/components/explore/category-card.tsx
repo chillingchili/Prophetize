@@ -27,7 +27,9 @@ export default function CategoryCard({ categoryKey, label, count, onPress }: Pro
     return (
         <Pressable
             onPress={onPress}
-            className="flex-1 rounded-2xl overflow-hidden"
+            className="flex-1 rounded-xl overflow-hidden"
+            accessibilityRole="button"
+            accessibilityLabel={`${label} category${count !== undefined ? `, ${count} markets` : ''}`}
             style={{
                 minHeight: 96,
                 borderWidth: 1,

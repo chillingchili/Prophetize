@@ -15,13 +15,14 @@ import CardSkeleton from '@/components/explore/card-skeleton';
 import PredictionCard from '@/components/explore/prediction-card';
 import { EmptyState } from '@/components/common/empty-state';
 import { ExploreTheme } from '../constants/explore-theme';
-import { UI_COLORS } from '../constants/ui-tokens';
+import { UI_COLORS, useUITheme } from '../constants/ui-tokens';
 import * as api from '../utils/api';
 import { normalizePrediction } from '../utils/prediction-helpers';
 
 const PAGE_SIZE = 10;
 
 export default function ExploreDetails() {
+    useUITheme();
     const router = useRouter();
     const { sort, category, search } = useLocalSearchParams<{
         sort?: string;

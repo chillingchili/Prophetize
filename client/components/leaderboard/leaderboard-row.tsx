@@ -3,7 +3,7 @@ import { Text, View, Image } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 import { getTopRankStyle } from './leaderboard-style';
-import { UI_COLORS, UI_TYPE_SCALE } from '@/constants/ui-tokens';
+import { UI_COLORS, UI_TYPE_SCALE, UI_SHADOWS } from '@/constants/ui-tokens';
 
 export type LeaderboardEntry = {
     rank: number;
@@ -85,11 +85,7 @@ export default function LeaderboardRow({ item }: Props) {
             style={{
                 borderColor: isCurrentUser ? UI_COLORS.accentBorder : topStyles.borderColor,
                 backgroundColor: isCurrentUser ? UI_COLORS.accentSoft : topStyles.cardBg,
-                shadowColor: topStyles.shadowColor,
-                shadowOpacity: 0.08,
-                shadowOffset: { width: 0, height: 6 },
-                shadowRadius: 10,
-                elevation: 3,
+                ...UI_SHADOWS.lift,
             }}
         >
             {item.rank === 1 && (

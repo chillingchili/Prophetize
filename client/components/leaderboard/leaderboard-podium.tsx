@@ -5,7 +5,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { ExploreTheme } from '@/constants/explore-theme';
 import { LeaderboardEntry } from './leaderboard-row';
 import { getTopRankStyle } from './leaderboard-style';
-import { UI_COLORS, UI_TYPE_SCALE } from '@/constants/ui-tokens';
+import { UI_COLORS, UI_TYPE_SCALE, UI_SHADOWS } from '@/constants/ui-tokens';
 
 type Props = {
     entries: LeaderboardEntry[];
@@ -41,11 +41,7 @@ export default function LeaderboardPodium({ entries }: Props) {
                                 borderColor: topStyles.borderColor,
                                 backgroundColor: topStyles.cardBg,
                                 minHeight: isCenter ? 174 : 152,
-                                shadowColor: topStyles.shadowColor,
-                                shadowOpacity: isCenter ? 0.12 : 0.08,
-                                shadowOffset: { width: 0, height: isCenter ? 8 : 6 },
-                                shadowRadius: isCenter ? 12 : 10,
-                                elevation: isCenter ? 4 : 3,
+                                ...(isCenter ? UI_SHADOWS.lift : UI_SHADOWS.soft),
                             }}
                         >
                             <View className="px-3 py-2" style={{ backgroundColor: topStyles.stripeBg }}>

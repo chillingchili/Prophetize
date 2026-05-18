@@ -5,10 +5,11 @@ import Fontisto from '@expo/vector-icons/Fontisto';
 import WideButton from '@/components/auth/wide-button';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import GoogleLogin from "@/components/auth/google-login";
-import { UI_COLORS } from "@/constants/ui-tokens";
+import { UI_COLORS, useUITheme } from "@/constants/ui-tokens";
 
 
 export default function WelcomeScreen(){
+    useUITheme();
     const { width, height } = useWindowDimensions();
     const router = useRouter();
     const heroSize = Math.min(width * 0.35, 180);

@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { categoryIconMap } from '@/constants/ui-mappings';
 import { ExploreTheme } from '../constants/explore-theme';
-import { UI_COLORS } from '../constants/ui-tokens';
+import { UI_COLORS, useUITheme } from '../constants/ui-tokens';
 import * as api from '../utils/api';
 
 type CategoryItem = { key: string; label: string };
@@ -70,7 +70,8 @@ function CategoryRow({
 }
 
 export default function CategoriesScreen() {
-    const router = useRouter();
+  useUITheme();
+  const router = useRouter();
     const [categories, setCategories] = useState<CategoryItem[]>([]);
 
     useEffect(() => {

@@ -83,7 +83,7 @@ export default function EditProfileScreen() {
       <Stack.Screen options={{ title: 'Edit Profile', headerShown: false }} />
 
       <View className="flex-row items-center px-5 py-4">
-        <Pressable onPress={() => router.back()} hitSlop={10}>
+        <Pressable onPress={() => router.back()} hitSlop={10} accessibilityLabel="Go back" accessibilityRole="button">
           <MaterialIcons name="chevron-left" size={28} color={theme.textPrimary} />
         </Pressable>
         <Text className="font-grotesk-bold text-[18px] ml-2" style={{ color: theme.textPrimary }}>
@@ -168,6 +168,8 @@ export default function EditProfileScreen() {
           onPress={handleSave}
           disabled={loading}
           className="mt-8 mb-10 items-center justify-center"
+          accessibilityRole="button"
+          accessibilityLabel="Save Changes"
           style={{
             width: '100%',
             height: 52,
@@ -179,7 +181,7 @@ export default function EditProfileScreen() {
           {loading ? (
             <ActivityIndicator color="#FFFFFF" />
           ) : (
-            <Text className="font-grotesk-bold text-[15px]" style={{ color: '#FFFFFF' }}>
+            <Text className="font-grotesk-bold text-[15px]" style={{ color: theme.surface }}>
               Save Changes
             </Text>
           )}

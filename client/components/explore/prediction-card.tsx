@@ -81,7 +81,7 @@ export default function PredictionCard({prediction, onPress, index = 0}:Props) {
       accessibilityRole="button"
       accessibilityHint="Opens market details"
     >
-      <View className="rounded-2xl overflow-hidden" style={{ backgroundColor: UI_COLORS.surface }}>
+      <View className="rounded-xl overflow-hidden" style={{ backgroundColor: UI_COLORS.surface }}>
 
         {/* Image with diagonal gradient fade: top-right visible -> bottom-left hidden */}
         {prediction.image ? (

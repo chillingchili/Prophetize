@@ -132,6 +132,8 @@ export function ProfileHeader({
                 backgroundColor: isFollowing ? UI_COLORS.textMuted : UI_COLORS.success,
                 opacity: followLoading ? 0.7 : 1,
               }}
+              accessibilityRole="button"
+              accessibilityLabel={followLoading ? 'Updating follow status' : isFollowing ? 'Following' : 'Follow'}
             >
               <Text
                 className="font-jetbrain-bold text-[12px]"

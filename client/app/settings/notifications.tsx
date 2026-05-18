@@ -13,7 +13,7 @@ export default function NotificationsScreen() {
     <SafeAreaView className="flex-1" style={{ backgroundColor: theme.pageBg }}>
       <Stack.Screen options={{ title: 'Notifications', headerShown: false }} />
       <View className="flex-row items-center px-5 py-4">
-        <Pressable onPress={() => router.back()} hitSlop={10}>
+        <Pressable onPress={() => router.back()} hitSlop={10} accessibilityLabel="Go back" accessibilityRole="button">
           <MaterialIcons name="chevron-left" size={28} color={theme.textPrimary} />
         </Pressable>
         <Text className="font-grotesk-bold text-[18px] ml-2" style={{ color: theme.textPrimary }}>

@@ -26,19 +26,19 @@ export function ActivityItem({
     switch (result) {
       case 'won':
         return {
-          bg: '#ECFDF5',
+          bg: UI_COLORS.outcomeYesSoft,
           text: UI_COLORS.success,
           label: 'Won',
         };
       case 'lost':
         return {
-          bg: '#FEF2F2',
+          bg: UI_COLORS.outcomeNoSoft,
           text: UI_COLORS.danger,
           label: 'Lost',
         };
       case 'pending':
         return {
-          bg: '#FFFBEB',
+          bg: UI_COLORS.hintBg,
           text: UI_COLORS.warning,
           label: 'Pending',
         };

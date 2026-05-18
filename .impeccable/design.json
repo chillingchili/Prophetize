@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-05-18T17:56:00.000Z",
+  "title": "Design System: Prophetize",
+  "extensions": {
+    "colorMeta": {
+      "teal-accent": {
+        "role": "primary",
+        "displayName": "Teal Accent",
+        "canonical": "oklch(55% 0.15 220)",
+        "tonalRamp": ["#002028", "#003545", "#004D5C", "#1A6A7E", "#2B8AA0", "#42A9C2", "#65C8DE", "#8FE0F0", "#BDF0F8", "#E6FAFD"]
+      },
+      "page-bg": {
+        "role": "neutral",
+        "displayName": "Page Background",
+        "canonical": "oklch(97% 0.003 260)",
+        "tonalRamp": ["#0B0E11", "#151921", "#1F2530", "#2A3441", "#475569", "#64748B", "#94A3B8", "#CBD5E1", "#E2E8F0", "#F4F5F7"]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Surface",
+        "canonical": "oklch(100% 0 0)",
+        "tonalRamp": ["#0B0E11", "#151A21", "#1E252F", "#2A3441", "#3B4A5C", "#5E6B7A", "#94A3B8", "#CBD5E1", "#E2E8F0", "#FFFFFF"]
+      },
+      "text-primary": {
+        "role": "neutral",
+        "displayName": "Text Primary",
+        "canonical": "oklch(15% 0.01 260)",
+        "tonalRamp": ["#0F172A", "#1E293B", "#334155", "#475569", "#64748B", "#94A3B8", "#CBD5E1", "#E2E8F0", "#F1F5F9", "#F4F6F8"]
+      },
+      "secondary": {
+        "role": "secondary",
+        "displayName": "Secondary Amber",
+        "canonical": "oklch(55% 0.15 60)",
+        "tonalRamp": ["#2D1A00", "#4A2B00", "#713F12", "#92400E", "#B45309", "#D97706", "#F59E0B", "#FBBF24", "#FDE68A", "#FFFBEB"]
+      },
+      "tertiary": {
+        "role": "tertiary",
+        "displayName": "Tertiary Violet",
+        "canonical": "oklch(50% 0.2 290)",
+        "tonalRamp": ["#1A0533", "#2E1065", "#3B0764", "#4C1D95", "#6D28D9", "#7C3AED", "#8B5CF6", "#A78BFA", "#DDD6FE", "#F5F3FF"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero headlines on login/welcome screens only." },
+      "headline": { "displayName": "Headline", "purpose": "Balance display, screen titles." },
+      "title": { "displayName": "Title", "purpose": "Section headers, card titles, button labels." },
+      "body": { "displayName": "Body", "purpose": "Default reading text throughout the app." },
+      "label": { "displayName": "Label", "purpose": "Metadata, timestamps, tab labels, data values." }
+    },
+    "shadows": [
+      { "name": "soft", "value": "0 3px 6px rgba(15,23,42,0.08)", "purpose": "Default card elevation barely noticeable." },
+      { "name": "lift", "value": "0 6px 10px rgba(15,23,42,0.12)", "purpose": "Elevated cards, pickers, dropdowns." },
+      { "name": "fab", "value": "0 4px 8px rgba(15,23,42,0.12)", "purpose": "Floating action button elevation." },
+      { "name": "tab-pill", "value": "0 10px 16px rgba(15,23,42,0.12)", "purpose": "Floating tab bar shadow sits above all content." }
+    ],
+    "motion": [
+      { "name": "spring-tab", "value": "damping:26 stiffness:220 mass:0.3", "purpose": "Tab indicator spring animation." },
+      { "name": "press-scale", "value": "scale 0.98", "purpose": "Button press feedback." },
+      { "name": "ease-balance", "value": "cubic-bezier(0,0,0.2,1) 600ms", "purpose": "Balance counter animation ease-out cubic." }
+    ],
+    "breakpoints": []
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Primary action button with teal accent fill. Pill-shaped.",
+      "html": "<button class=\"ds-btn-primary\">Claim</button>",
+      "css": ".ds-btn-primary { background: #0891B2; color: #FFFFFF; font-family: 'SpaceGrotesk', sans-serif; font-weight: 700; font-size: 14px; padding: 16px 24px; border-radius: 9999px; border: none; transition: opacity 0.15s, transform 0.15s; } .ds-btn-primary:active { opacity: 0.9; transform: scale(0.98); }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Secondary outline button with surface background.",
+      "html": "<button class=\"ds-btn-secondary\">Cancel</button>",
+      "css": ".ds-btn-secondary { background: #FFFFFF; color: #0F172A; font-family: 'SpaceGrotesk', sans-serif; font-weight: 700; font-size: 14px; padding: 16px 24px; border-radius: 9999px; border: 1px solid #E2E8F0; transition: opacity 0.15s, transform 0.15s; } .ds-btn-secondary:active { opacity: 0.9; transform: scale(0.98); } .dark .ds-btn-secondary { background: #151A21; color: #F4F6F8; border-color: #2A3441; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card-default",
+      "description": "Default card container with soft shadow and 12px radius.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-icon\"></div><div><h3 class=\"ds-card-title\">Card Title</h3><p class=\"ds-card-body\">Supporting text</p></div></div>",
+      "css": ".ds-card { background: #FFFFFF; border-radius: 12px; padding: 16px; border: 1px solid #E2E8F0; box-shadow: 0 3px 6px rgba(15,23,42,0.08); display: flex; flex-direction: row; gap: 12px; align-items: center; } .ds-card-icon { width: 48px; height: 48px; border-radius: 9999px; background: rgba(8,145,178,0.12); display: flex; align-items: center; justify-content: center; } .ds-card-title { font-family: 'SpaceGrotesk', sans-serif; font-weight: 700; font-size: 14px; color: #0F172A; margin: 0; } .ds-card-body { font-family: 'Inter', sans-serif; font-size: 12px; color: #475569; margin: 2px 0 0 0; } .dark .ds-card { background: #151A21; border-color: #2A3441; box-shadow: 0 3px 6px rgba(0,0,0,0.35); } .dark .ds-card-title { color: #F4F6F8; } .dark .ds-card-body { color: #9AA5B1; }"
+    },
+    {
+      "name": "Input Field",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Text input with pill-like rounding and bordered style.",
+      "html": "<div class=\"ds-input-group\"><label class=\"ds-input-label\">Email</label><input class=\"ds-input\" placeholder=\"you@example.com\" /></div>",
+      "css": ".ds-input-group { display: flex; flex-direction: column; gap: 0; } .ds-input-label { font-family: 'SpaceGrotesk', sans-serif; font-weight: 700; font-size: 16px; color: #475569; padding: 0 12px 4px; } .ds-input { font-family: 'Inter', sans-serif; font-size: 16px; padding: 14px 16px; border-radius: 24px; border: 2px solid #E2E8F0; background: #FFFFFF; color: #0F172A; outline: none; } .ds-input:focus { border-color: #0891B2; } .dark .ds-input-label { color: #9AA5B1; } .dark .ds-input { background: #151A21; border-color: #2A3441; color: #F4F6F8; } .dark .ds-input:focus { border-color: #2BB5D6; } .ds-input::placeholder { color: #94A3B8; } .dark .ds-input::placeholder { color: #5E6B7A; }"
+    },
+    {
+      "name": "Floating Tab Bar",
+      "kind": "nav",
+      "refersTo": "tab-bar",
+      "description": "Bottom navigation as a floating pill with animated indicator.",
+      "html": "<nav class=\"ds-tab-bar\"><div class=\"ds-tab-indicator\"></div><a class=\"ds-tab ds-tab-active\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"#0891B2\"><path d=\"M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z\"/></svg><span>Home</span></a><a class=\"ds-tab\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"#94A3B8\"><path d=\"M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z\"/></svg><span>Explore</span></a></nav>",
+      "css": ".ds-tab-bar { display: flex; flex-direction: row; background: #FFFFFF; border-radius: 36px; padding: 10px 6px; box-shadow: 0 10px 16px rgba(15,23,42,0.12); position: relative; align-items: center; } .ds-tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 0; text-decoration: none; z-index: 1; } .ds-tab span { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.3px; color: #94A3B8; opacity: 0.5; } .ds-tab-active span { color: #0891B2; opacity: 1; } .ds-tab-indicator { position: absolute; top: 5px; bottom: 5px; width: 60px; left: 8px; border-radius: 30px; background: rgba(8,145,178,0.12); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); } .dark .ds-tab-bar { background: #151A21; box-shadow: 0 10px 16px rgba(0,0,0,0.45); } .dark .ds-tab span { color: #5E6B7A; } .dark .ds-tab-active span { color: #2BB5D6; } .dark .ds-tab-indicator { background: rgba(43,181,214,0.16); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Ledger",
+    "overview": "Prophetize is a prediction market that needs to feel trustworthy enough for virtual money but approachable enough for casual daily use. Like a well-kept financial ledger: precise, clean, and calm. Every screen communicates clarity over cleverness — no user should wonder what something does or where to tap next. The system uses a restrained cyan-teal accent on a neutral base, soft card layering with subtle shadows, and a type system that contrasts bold Space Grotesk headings with readable Inter Tight body text. It explicitly rejects over-simplified AI-generated interfaces, clashing multi-color palettes, and noisy or complicated layouts.",
+    "keyCharacteristics": [
+      "Restrained single-accent palette on tinted neutrals",
+      "Card-based layout with soft shadow elevation (flat at rest, lifted on interaction)",
+      "Bold sans-serif headings + humanist sans body + monospaced data labels",
+      "Generous rounding that signals touchability",
+      "Full light/dark mode support with independent color values per theme"
+    ],
+    "rules": [
+      { "name": "The One-Accent Rule", "body": "The teal accent covers ≤10% of any given screen. Its rarity is the point. When something needs emphasis, use weight or scale — not an extra color. Secondary and tertiary are role-specific, never decorative.", "section": "colors" },
+      { "name": "The Flat-By-Default Rule", "body": "Surfaces are flat at rest. Shadows appear only as elevation cues for interactive or overlaid elements. Cards do not float arbitrarily — shadow signals 'this can be interacted with' or 'this is on top of other content.'", "section": "elevation" }
+    ],
+    "dos": [
+      "Do use the teal primary sparingly — ≤10% of screen area. It should feel like a highlight, not a default.",
+      "Do use secondary (amber) for second-level actions, tags, and warm accents.",
+      "Do use tertiary (violet) only for premium/special elements — it's the rarest color in the system.",
+      "Do use JetBrains Mono for all numeric displays (balance, percentages, scores, timestamps).",
+      "Do keep card radius at 12px consistently. Mixing 8px and 12px creates visual noise.",
+      "Do use dark mode shadows with higher opacity (0.35+) — the dark canvas absorbs shadow.",
+      "Do tint neutrals toward cool (not warm) — it complements the teal accent."
+    ],
+    "donts": [
+      "Don't use more than one accent at full saturation on the same surface. Primary, secondary, and tertiary are role-specific — they never compete.",
+      "Don't use secondary or tertiary as decorative flair. Each has a functional role.",
+      "Don't use hard-coded colors — always reference UI_COLORS or AppTheme tokens.",
+      "Don't leave text without an explicit color — default black breaks in dark mode.",
+      "Don't add decorative gradients, glassmorphism, or 3D effects. Flat with shadow is the language.",
+      "Don't use complicated or noisy layouts — clarity and simplicity first per the brand principles.",
+      "Don't use border-left greater than 1px as a colored accent stripe. Use full borders or background tints.",
+      "Don't create nested cards — cards should be siblings, not parents and children.",
+      "Don't use arbitrary font sizes like [10px], [11px], [13px] — stick to the modular scale defined in tailwind.config.js."
+    ]
+  }
+}

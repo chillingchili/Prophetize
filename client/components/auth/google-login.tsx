@@ -51,6 +51,8 @@ export default function GoogleLogin({disabled, colors}:Props) {
         onPressIn={()=>setPressed(true)}
         onPressOut={()=>setPressed(false)}
         className={`flex-row items-center justify-center p-4 rounded-full gap-[8px]`}
+        accessibilityRole="button"
+        accessibilityLabel="Continue with Google"
         style={{
             opacity: disabled ? 0.6 : (pressed ? 0.9 : 1),
             backgroundColor: pressed ? palette.surfaceMuted : palette.surface,
@@ -94,7 +96,7 @@ export default function GoogleLogin({disabled, colors}:Props) {
           }
         }}>
         <AntDesign name="google" size={24} color={palette.icon} />
-        <Text className="font-grotesk-bold text-[18px]" style={{ color: palette.text }}>
+        <Text className="font-grotesk-bold text-[16px]" style={{ color: palette.text }}>
               Continue with Google
         </Text>
       </Pressable>

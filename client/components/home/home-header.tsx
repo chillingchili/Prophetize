@@ -115,7 +115,7 @@ export default function HomeHeader({ balance, unreadCount = 0, onNotificationPre
                         >
                             <Text
                                 style={{
-                                    color: '#FFFFFF',
+                                    color: UI_COLORS.surface,
                                     fontSize: 10,
                                     fontWeight: '700',
                                     lineHeight: 14,

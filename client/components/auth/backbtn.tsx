@@ -1,5 +1,6 @@
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { View } from 'react-native';
+import { UI_COLORS } from '@/constants/ui-tokens';
 
 interface BackBtnProps {
     size?: number;
@@ -13,9 +14,9 @@ export const BackBtn = ({ size, color  }: BackBtnProps) => {
                 width: 50,
                 height: 50,
                 borderRadius: 100,
-                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                backgroundColor: UI_COLORS.surface,
                 borderWidth: 1.5,
-                borderColor: 'rgba(0, 0, 0, 0.1)',
+                borderColor: UI_COLORS.border,
                 alignItems: 'center',
                 justifyContent: 'center',
             }}
