@@ -5,7 +5,7 @@ milestone_name: milestone
 status: completed
 stopped_at: Completed Phase 12 (12-01 + 12-02) — notification flow
 last_updated: "2026-05-17T14:42:21.461Z"
-last_activity: 2026-05-17
+last_activity: 2026-05-18
 progress:
   total_phases: 12
   completed_phases: 6
@@ -126,6 +126,7 @@ None yet.
 |---|-------------|------|--------|-----------|
 | 260415 | pending approvals for the admin web should show the description of the market instead of just showing the title | 2026-05-17 | 1138f1d | [260415-pending-approvals-for-the-admin-web-shou](./quick/260415-pending-approvals-for-the-admin-web-shou/) |
 | 260416 | Fix the 10 behavioral/UX cons from the impeccable audit on ProfileScreen (sub-components, tokens, error/loading/cache) | 2026-05-17 | (pending) | [260416-fix-the-cons-from-the-impeccable-audit-o](./quick/260416-fix-the-cons-from-the-impeccable-audit-o/) |
+| 260417 | Kill PID 34268 holding port 3001, add EADDRINUSE error handler + kill-port script | 2026-05-18 | 45e3299 | [260417-server-bug-port-3001-eaddrinuse](./quick/260417-server-bug-port-3001-eaddrinuse/) |
 
 ## Session Continuity
 
