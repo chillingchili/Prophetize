@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-04-13)
 Phase: 12
 Plan: 02
 Status: completed
-Last activity: 2026-05-17 - Completed Phase 12 plans 01 (backend notifications) and 02 (client notification UX)
+Last activity: 2026-05-18 - Completed quick task 260417: Kill PID 34268 holding port 3001, add EADDRINUSE error handler + kill-port script
 
 Progress: [██████████] 100%
 
@@ -122,11 +122,11 @@ None yet.
 
 ### Quick Tasks Completed
 
-| # | Description | Date | Commit | Directory |
-|---|-------------|------|--------|-----------|
-| 260415 | pending approvals for the admin web should show the description of the market instead of just showing the title | 2026-05-17 | 1138f1d | [260415-pending-approvals-for-the-admin-web-shou](./quick/260415-pending-approvals-for-the-admin-web-shou/) |
-| 260416 | Fix the 10 behavioral/UX cons from the impeccable audit on ProfileScreen (sub-components, tokens, error/loading/cache) | 2026-05-17 | (pending) | [260416-fix-the-cons-from-the-impeccable-audit-o](./quick/260416-fix-the-cons-from-the-impeccable-audit-o/) |
-| 260417 | Kill PID 34268 holding port 3001, add EADDRINUSE error handler + kill-port script | 2026-05-18 | 45e3299 | [260417-server-bug-port-3001-eaddrinuse](./quick/260417-server-bug-port-3001-eaddrinuse/) |
+| # | Description | Date | Commit | Status | Directory |
+|---|-------------|------|--------|--------|-----------|
+| 260415 | pending approvals for the admin web should show the description of the market instead of just showing the title | 2026-05-17 | 1138f1d | | [260415-pending-approvals-for-the-admin-web-shou](./quick/260415-pending-approvals-for-the-admin-web-shou/) |
+| 260416 | Fix the 10 behavioral/UX cons from the impeccable audit on ProfileScreen (sub-components, tokens, error/loading/cache) | 2026-05-17 | (pending) | | [260416-fix-the-cons-from-the-impeccable-audit-o](./quick/260416-fix-the-cons-from-the-impeccable-audit-o/) |
+| 260417 | Kill PID 34268 holding port 3001, add EADDRINUSE error handler + kill-port script | 2026-05-18 | 52ec16f | Verified | [260417-server-bug-port-3001-eaddrinuse](./quick/260417-server-bug-port-3001-eaddrinuse/) |
 
 ## Session Continuity
 
