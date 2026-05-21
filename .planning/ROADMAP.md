@@ -231,3 +231,15 @@ Plans:
 Plans:
 - [ ] 12-01-PLAN.md — Backend notification infrastructure (DB, API, resolution hook, WebSocket)
 - [ ] 12-02-PLAN.md — Client notification UX (badge context, inbox wiring, header badge)
+
+### Phase 13: Fix payout bug
+
+**Goal:** Fix the market resolution payout pipeline end-to-end: correct the payout formula, unblock the RPC from being silently dropped (check constraint), add missing DB columns, and retroactively pay out all previously-finalized markets that never actually paid.
+
+**Requirements**: [PAYOUT-01, PAYOUT-02, PAYOUT-03, PAYOUT-04, PAYOUT-05]
+**Depends on:** Phase 12
+**Plans:** 2/2 plans complete
+
+Plans:
+- [x] 13-01-PLAN.md — Fix DB layer: payout formula, constraint, missing columns, RPC function
+- [x] 13-02-PLAN.md — Surface RPC errors in controller + retroactive payout script

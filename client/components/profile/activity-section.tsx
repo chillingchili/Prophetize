@@ -23,7 +23,8 @@ const toActivityIcon = (type: string): keyof typeof MaterialIcons.glyphMap => {
   const normalized = type.toLowerCase();
   if (normalized === 'buy') return 'trending-up';
   if (normalized === 'sell') return 'trending-down';
-  if (normalized === 'resolution') return 'how-to-vote';
+  if (normalized === 'payout' || normalized === 'resolution') return 'how-to-vote';
+  if (normalized === 'loss') return 'timeline';
   return 'timeline';
 };
 
@@ -31,7 +32,8 @@ const toActivityLabel = (type: string) => {
   const normalized = type.toLowerCase();
   if (normalized === 'buy') return 'Bought';
   if (normalized === 'sell') return 'Sold';
-  if (normalized === 'resolution') return 'Resolved';
+  if (normalized === 'payout' || normalized === 'resolution') return 'Payout';
+  if (normalized === 'loss') return 'Loss';
   return 'Activity';
 };
 
@@ -62,7 +64,7 @@ export function ActivitySection({ activities }: ActivitySectionProps) {
         ) : (
           activities.map((activity: PortfolioActivityTransaction, index: number) => {
             const amount = Number(activity.amount) || 0;
-            const isPositive = amount >= 0;
+            const isPositive = activity.type !== 'BUY';
             const signedAmount = `${isPositive ? '+' : '-'}${formatCurrency(Math.abs(amount))}`;
             const icon = toActivityIcon(activity.type);
             const label = toActivityLabel(activity.type);

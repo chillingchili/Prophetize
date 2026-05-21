@@ -73,7 +73,7 @@ export async function getPortfolioSummary(userId: string): Promise<PortfolioSumm
   // 2. Fetch all positions with their option's current_price and market status
   //    We do a two-step fetch to avoid unreliable cross-table .eq() filters:
   //    Step A — get all user_positions with joined market_options
-  const { data: positions, error: posError } = await supabase
+  const { data: positions, error: posError } = await supabaseAdmin
     .from('user_positions')
     .select(`
       shares_owned,
@@ -101,11 +101,11 @@ export async function getPortfolioSummary(userId: string): Promise<PortfolioSumm
   const net_worth = profile.balance + positions_value;
 
   // 3. Biggest win: highest payout from a resolution transaction
-  const { data: wins, error: winError } = await supabase
+  const { data: wins, error: winError } = await supabaseAdmin
     .from('transactions')
     .select('amount')
     .eq('user_id', userId)
-    .eq('type', 'RESOLUTION')
+    .eq('type', 'PAYOUT')
     .order('amount', { ascending: false })
     .limit(1);
 
@@ -113,7 +113,7 @@ export async function getPortfolioSummary(userId: string): Promise<PortfolioSumm
   const biggest_win = wins && wins.length > 0 ? (wins[0]?.amount ?? 0) : 0;
 
   // 4. Predictions count: total unique positions ever opened
-  const { count, error: countError } = await supabase
+  const { count, error: countError } = await supabaseAdmin
     .from('user_positions')
     .select('id', { count: 'exact', head: true })
     .eq('user_id', userId);
@@ -187,7 +187,7 @@ export async function getPositions(
 
   // Fetch all positions with nested option + market data in one query
   // Using named FK hints to match your existing pattern in marketController
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('user_positions')
     .select(`
       id,
@@ -387,7 +387,7 @@ export async function getMarketPosition(
 // ─────────────────────────────────────────────────────────────
 export async function getTransactionHistory(userId: string): Promise<ActivityTransaction[]> {
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('transactions')
     .select(`
       id,

@@ -200,19 +200,22 @@ export const resolveMarket = async (req: AuthRequest, res: Response) => {
       data = fullPatchResult.data;
     }
 
-    // Distribute winnings to winning users
+    // Track payout result for logging and response
+    const payoutResult: { status: string; error?: string } = { status: 'pending' };
+
+    // Distribute winnings to winning users (non-blocking)
     (async () => {
       const { error: payoutError } = await supabaseAdmin.rpc('handle_market_resolution', {
         p_market_id: marketId,
         p_resolved_option_id: resolvedOptionId,
       });
       if (payoutError) {
+        payoutResult.status = 'error';
+        payoutResult.error = payoutError.message;
         console.error('handle_market_resolution RPC failed:', payoutError);
       } else {
-        console.log('handle_market_resolution succeeded for market', marketId);
-      }
-      if (payoutError) {
-        console.error('handle_market_resolution RPC failed:', payoutError);
+        payoutResult.status = 'success';
+        console.log('handle_market_resolution RPC succeeded for market', marketId);
       }
     })();
 
@@ -254,6 +257,7 @@ export const resolveMarket = async (req: AuthRequest, res: Response) => {
     return res.status(200).json({
       message: 'Market resolved successfully.',
       data,
+      payout_status: payoutResult.status,
       resolution: {
         resolution_option_id: resolvedOptionId,
         resolution_evidence_url: evidenceUrl,

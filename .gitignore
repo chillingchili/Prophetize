@@ -25,3 +25,4 @@ client/constants/backendUrl.ts
 graphify-out
 m3-demo.html
 market-details-m3.html
+server/supabase/.temp

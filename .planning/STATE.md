@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed Phase 12 (12-01 + 12-02) — notification flow
-last_updated: "2026-05-17T14:42:21.461Z"
-last_activity: 2026-05-18
+stopped_at: Completed 13-02-PLAN.md (no commit — user prefers manual commits)
+last_updated: "2026-05-21T13:23:47.208Z"
+last_activity: "2026-05-21 - Plan 13-01: Fix DB layer — payout formula, constraint, missing columns, RPC function"
 progress:
-  total_phases: 12
-  completed_phases: 6
-  total_plans: 20
-  completed_plans: 15
-  percent: 75
+  total_phases: 13
+  completed_phases: 7
+  total_plans: 22
+  completed_plans: 17
+  percent: 100
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-13)
 
 **Core value:** Ship reliable prediction-market features with contract-first backend/frontend alignment.
-**Current focus:** Phase 12 — add notification flow and function to the app
+**Current focus:** Phase 13 — fix payout bug
 
 ## Current Position
 
-Phase: 12
-Plan: 02
+Phase: 13
+Plan: 01
 Status: completed
-Last activity: 2026-05-18 - Completed quick task 260417: Kill PID 34268 holding port 3001, add EADDRINUSE error handler + kill-port script
+Last activity: 2026-05-21 - Plan 13-01: Fix DB layer — payout formula, constraint, missing columns, RPC function
 
 Progress: [██████████] 100%
 
@@ -67,6 +67,8 @@ Progress: [██████████] 100%
 | Phase 11-change-auth-of-admin-web-to-be-simpler P02 | 5min | 2 tasks | 4 files |
 | Phase 12-notification-infra P01 | 12min | 3 tasks | 6 files |
 | Phase 12-notification-ux P02 | 10min | 3 tasks | 9 files |
+| Phase 13-fix-payout-bug P01 | 5min | 1 task | 1 file |
+| Phase 13-fix-payout-bug P02 | 12min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -100,6 +102,10 @@ Progress: [██████████] 100%
 - [Phase 11-change-auth-of-admin-web-to-be-simpler]: Used inline styles for login page centering to avoid modifying styles.css; replaced isAuthed derived from getStoredAdminToken() with useAdminAuth().isAuthed; renamed isLoading to isQueueLoading to avoid collision with auth isLoading; loadQueues guards on isAuthed instead of manual token check; handleLogout clears all queue state
 - [Phase 12-notification-infra]: Notification creation is non-blocking (async IIFE) to avoid delaying market resolution response; using supabaseAdmin (service role) for all notification ops to bypass RLS; admin announcements target /tabs/profile path
 - [Phase 12-notification-ux]: Badge resets when notification screen opens with real backend data (not on mount); mark-all-read uses optimistic UI (clear items first, revert on failure); userId matching for notification.new is done client-side since room is broadcast
+- [Phase 13-fix-payout-bug]: Used TRUNC(rec.shares_owned * 1.0, 2) instead of FLOOR(rec.shares_owned * 1.0, 2) because PostgreSQL FLOOR only accepts one argument; TRUNC with 2 args achieves identical behavior for positive values
+- [Phase 13-fix-payout-bug]: Kept async IIFE pattern (non-blocking) instead of awaiting RPC before response — preserves existing low-latency UX established in Phase 12 for notification side effects
+- [Phase 13-fix-payout-bug]: Shared mutable object (const payoutResult) used to track IIFE outcome since response is sent before IIFE completes
+- [Phase 13-fix-payout-bug]: Retro script uses sequential for...of loop with 100ms delay instead of Promise.all to avoid overwhelming the database
 
 ### Roadmap Evolution
 
@@ -111,6 +117,8 @@ Progress: [██████████] 100%
 - Phase 11 added: change auth of admin web to be simpler
 - Phase 12 added: Add notification flow and function to the app
 - Phase 12 context gathered: notification triggers, delivery mechanism, unread badge UX, backend persistence
+- Phase 13 added: Fix payout bug
+- 13-01-PLAN.md completed: Fix DB layer — payout formula, constraint, missing columns, RPC function
 
 ### Pending Todos
 
@@ -130,6 +138,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-17T14:42:21.461Z
-Stopped at: Completed Phase 12 (12-01 + 12-02) — notification flow
+Last session: 2026-05-21T13:20:58.548Z
+Stopped at: Completed 13-02-PLAN.md (no commit — user prefers manual commits)
 Resume file: None
