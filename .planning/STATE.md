@@ -7,11 +7,11 @@ stopped_at: Completed 13-02-PLAN.md (no commit — user prefers manual commits)
 last_updated: "2026-05-21T13:23:47.208Z"
 last_activity: "2026-05-21 - Plan 13-01: Fix DB layer — payout formula, constraint, missing columns, RPC function"
 progress:
-  total_phases: 13
+  total_phases: 14
   completed_phases: 7
-  total_plans: 22
-  completed_plans: 17
-  percent: 100
+  total_plans: 26
+  completed_plans: 21
+  percent: 81
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-13)
 
 **Core value:** Ship reliable prediction-market features with contract-first backend/frontend alignment.
-**Current focus:** Phase 13 — fix payout bug
+**Current focus:** Phase 14 — production readiness
 
 ## Current Position
 
-Phase: 13
+Phase: 14
 Plan: 01
-Status: completed
-Last activity: 2026-05-21 - Plan 13-01: Fix DB layer — payout formula, constraint, missing columns, RPC function
+Status: planned
+Last activity: 2026-05-22 - Plan 14-04: Portfolio chart screen
 
 Progress: [██████████] 100%
 
@@ -118,6 +118,7 @@ Progress: [██████████] 100%
 - Phase 12 added: Add notification flow and function to the app
 - Phase 12 context gathered: notification triggers, delivery mechanism, unread badge UX, backend persistence
 - Phase 13 added: Fix payout bug
+- Phase 14 added: Production readiness — push notifications, auto-resolution, portfolio chart, splash & icons
 - 13-01-PLAN.md completed: Fix DB layer — payout formula, constraint, missing columns, RPC function
 
 ### Pending Todos

@@ -243,3 +243,16 @@ Plans:
 Plans:
 - [x] 13-01-PLAN.md — Fix DB layer: payout formula, constraint, missing columns, RPC function
 - [x] 13-02-PLAN.md — Surface RPC errors in controller + retroactive payout script
+
+### Phase 14: Production readiness — push notifications, auto-resolution, portfolio chart, splash & icons
+
+**Goal:** Ship to production by adding push notification delivery, market auto-resolution, portfolio chart screen, and proper splash screen/icon assets.
+**Requirements**: [PROD-01, PROD-02, PROD-03, PROD-04]
+**Depends on:** Phase 13
+**Plans:** 4 plans
+
+Plans:
+- [x] 14-01-PLAN.md — Push notification delivery via Expo Push API
+- [x] 14-02-PLAN.md — Splash screen and app icon assets
+- [x] 14-03-PLAN.md — Market auto-resolution worker via pg_cron
+- [x] 14-04-PLAN.md — Portfolio chart screen

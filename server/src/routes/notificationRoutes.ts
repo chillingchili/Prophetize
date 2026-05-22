@@ -12,4 +12,7 @@ router.patch("/read", requireAuth, notificationController.markAsRead);
 router.patch("/read-all", requireAuth, notificationController.markAllAsRead);
 router.get("/unread-count", requireAuth, notificationController.getUnreadCount);
 
+router.post("/register-push-token", requireAuth, notificationController.registerPushToken);
+router.post("/unregister-push-token", requireAuth, notificationController.unregisterPushToken);
+
 export default router;

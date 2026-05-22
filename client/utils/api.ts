@@ -626,6 +626,18 @@ export const getPortfolioActivity = async () => {
     return get('/portfolio/activity');
 };
 
+export type PortfolioChartRange = '1D' | '1W' | '1M' | 'ALL';
+
+export type PortfolioChartPoint = {
+    snapshot_date: string;
+    net_worth: number;
+    period: string;
+};
+
+export const getPortfolioChart = async (range: PortfolioChartRange = '1W') => {
+    return get(`/portfolio/chart?range=${range}`);
+};
+
 export const getCreatedMarkets = async (params?: {
     userId?: string;
     status?: string;

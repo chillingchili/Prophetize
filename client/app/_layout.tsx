@@ -12,6 +12,7 @@ import LoadingScreen from '@/components/common/loading-screen';
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
 import * as api from '@/utils/api';
 import { NotificationBadgeProvider } from '@/context/NotificationBadgeContext';
+import { PushNotificationProvider } from '@/context/PushNotificationContext';
 
 export default function Layout() {
     return (
@@ -53,21 +54,6 @@ function RootLayout() {
     };
   }, [token, isLoading, pathname]);
 
-  useEffect(() => {
-    if (!token) {
-      return;
-    }
-
-    const platform: api.NotificationPlatform = Platform.OS === 'ios'
-      ? 'ios'
-      : Platform.OS === 'android'
-      ? 'android'
-      : 'web';
-
-    const channelToken = `local-${platform}-${token.slice(0, 12)}`;
-    void api.registerNotificationChannel(channelToken, platform);
-  }, [token]);
-
   const [fontsLoaded] = useFonts({
     SpaceGrotesk_400Regular,
     SpaceGrotesk_700Bold,
@@ -82,6 +68,7 @@ function RootLayout() {
   }
 
   return (
+    <PushNotificationProvider>
     <NotificationBadgeProvider>
       <Stack>
         <Stack.Screen name="index" options={{ title: 'Prophetize', headerShown: false }} />
@@ -91,6 +78,7 @@ function RootLayout() {
         <Stack.Screen name="explore-details" options={{ title: 'Explore', headerShown: false, presentation: 'modal' }}/>
         <Stack.Screen name="categories" options={{ title: 'Categories', headerShown: false }}/>
         <Stack.Screen name="notifications" options={{ title: 'Notifications', headerShown: false }}/>
+        <Stack.Screen name="portfolio-chart" options={{ title: 'Portfolio Chart', headerShown: false }}/>
         <Stack.Screen name="tabs" options={{ title: 'tabs', headerShown: false }}/>
         <Stack.Screen name="settings/edit-profile" options={{ title: 'Edit Profile', headerShown: false }} />
         <Stack.Screen name="settings/notifications" options={{ title: 'Notifications', headerShown: false }} />
@@ -100,5 +88,6 @@ function RootLayout() {
         <Stack.Screen name="settings/about" options={{ title: 'About', headerShown: false }} />
       </Stack>
     </NotificationBadgeProvider>
+    </PushNotificationProvider>
   );
 }

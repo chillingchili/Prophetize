@@ -3,6 +3,7 @@ import { Response } from "express";
 import { AuthRequest } from "../types/authRequest";
 import { supabaseAdmin } from "../config/supabaseClient";
 import * as notificationDbService from "../services/notificationDbService";
+import * as pushNotificationService from "../services/pushNotificationService";
 
 type Platform = "ios" | "android" | "web";
 type NotificationType = "market" | "leaderboard" | "profile";
@@ -247,6 +248,65 @@ export const getUnreadCount = async (req: AuthRequest, res: Response) => {
   }
 };
 
+export const registerPushToken = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const token = typeof req.body?.token === 'string' ? req.body.token.trim() : '';
+    const platform = typeof req.body?.platform === 'string' ? req.body.platform.trim().toLowerCase() : '';
+
+    if (!token || token.length > 512) {
+      return res.status(400).json({ error: 'Invalid push token' });
+    }
+
+    if (platform !== 'ios' && platform !== 'android') {
+      return res.status(400).json({ error: 'Platform must be ios or android' });
+    }
+
+    const { error } = await pushNotificationService.registerPushToken(userId, token, platform);
+
+    if (error) {
+      console.error('registerPushToken failed', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+
+    return res.status(200).json({ message: 'Push token registered' });
+  } catch (error) {
+    console.error('registerPushToken failed', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+export const unregisterPushToken = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const token = typeof req.body?.token === 'string' ? req.body.token.trim() : '';
+
+    if (!token) {
+      return res.status(400).json({ error: 'Token is required' });
+    }
+
+    const { error } = await pushNotificationService.unregisterPushToken(userId, token);
+
+    if (error) {
+      console.error('unregisterPushToken failed', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+
+    return res.status(200).json({ message: 'Push token unregistered' });
+  } catch (error) {
+    console.error('unregisterPushToken failed', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
 export const sendAdminNotification = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user?.id;
@@ -284,6 +344,10 @@ export const sendAdminNotification = async (req: AuthRequest, res: Response) => 
         return res.status(500).json({ error: 'Internal server error' });
       }
 
+      // Send push asynchronously
+      pushNotificationService.sendPushToUser(targetUserId, title, body, { type: 'profile' })
+        .catch((err) => console.error('push send failed for admin notification', err));
+
       return res.status(200).json({ message: 'Admin notification sent', count: data?.length ?? 0 });
     }
 
@@ -316,6 +380,11 @@ export const sendAdminNotification = async (req: AuthRequest, res: Response) => 
       console.error('sendAdminNotification failed', error);
       return res.status(500).json({ error: 'Internal server error' });
     }
+
+    // Send push to all users asynchronously
+    const allUserIds = userIds.map((u) => u.id);
+    pushNotificationService.sendPushToMultipleUsers(allUserIds, title, body, { type: 'profile' })
+      .catch((err) => console.error('push broadcast failed', err));
 
     return res.status(200).json({ message: 'Admin notification sent', count: data?.length ?? 0 });
   } catch (error) {

@@ -1,27 +1,6 @@
-/**
- * Notification Database Service
- * 
- * All notification DB operations using supabaseAdmin (service role) to bypass RLS.
- * 
- * ─── DDL (run in Supabase SQL editor) ─────────────────────────────────────────
- * 
- * CREATE TABLE public.notifications (
- *     id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
- *     user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
- *     type text NOT NULL DEFAULT 'market',
- *     title text NOT NULL,
- *     body text NOT NULL,
- *     target_path text NOT NULL,
- *     target_signature text NOT NULL DEFAULT '',
- *     is_read boolean DEFAULT false,
- *     created_at timestamptz DEFAULT now()
- * );
- * 
- * CREATE INDEX idx_notifications_user_created ON public.notifications (user_id, created_at DESC);
- * CREATE INDEX idx_notifications_user_unread ON public.notifications (user_id, is_read) WHERE is_read = false;
- */
 import { supabaseAdmin } from '../config/supabaseClient';
 import { getPaginationRange } from '../utils/pagination';
+import { sendPushToUser, sendPushToMultipleUsers } from './pushNotificationService';
 
 type InsertNotificationItem = {
     user_id: string;
@@ -200,6 +179,13 @@ export const createMarketResolutionNotifications = async (
         if (insertError) {
             return { count: 0, error: insertError };
         }
+
+        // Send push notifications asynchronously
+        const traderUserIds = Array.from(traderMap.keys());
+        sendPushToMultipleUsers(traderUserIds, 'Market Resolved', `"${marketTitle}" has been resolved. Check your results!`, {
+            type: 'market',
+            marketId,
+        }).catch((err) => console.error('push send failed for market resolution', err));
 
         return {
             count: (inserted as unknown[] | null)?.length ?? 0,
