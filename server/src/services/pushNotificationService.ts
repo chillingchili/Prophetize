@@ -22,7 +22,7 @@ export async function sendPushNotification(
     to: token,
     title,
     body,
-    data,
+    ...(data !== undefined ? { data } : {}),
     sound: 'default',
     priority: 'high',
   };
