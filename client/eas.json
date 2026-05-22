@@ -23,7 +23,7 @@
         "EXPO_PUBLIC_GOOGLECLIENT_ID": "894321238879-t3ml2ou4h6blmrrlrr8nna0h5qpljr8f.apps.googleusercontent.com",
         "EXPO_PUBLIC_SUPABASE_URL": "https://lajdkaqihqdhgiphdiog.supabase.co",
         "EXPO_PUBLIC_SUPABASE_KEY": "sb_publishable_JfXqkINozYrQlCYH-0iK9Q_noDrRua7",
-        "EXPO_PUBLIC_BACKEND_URL": "https://prophetize-production.up.railway.app"
+        "EXPO_PUBLIC_BACKEND_URL": "https://prophetize.onrender.com"
       }
     },
     "production": {
@@ -32,7 +32,7 @@
         "EXPO_PUBLIC_GOOGLECLIENT_ID": "894321238879-t3ml2ou4h6blmrrlrr8nna0h5qpljr8f.apps.googleusercontent.com",
         "EXPO_PUBLIC_SUPABASE_URL": "https://lajdkaqihqdhgiphdiog.supabase.co",
         "EXPO_PUBLIC_SUPABASE_KEY": "sb_publishable_JfXqkINozYrQlCYH-0iK9Q_noDrRua7",
-        "EXPO_PUBLIC_BACKEND_URL": "https://prophetize-production.up.railway.app"
+        "EXPO_PUBLIC_BACKEND_URL": "https://prophetize.onrender.com"
       }
     }
   },
