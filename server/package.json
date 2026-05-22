@@ -5,6 +5,8 @@
   "scripts": {
     "test": "vitest run",
     "dev": "npx nodemon src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
     "kill-port": "node -e \"const{execSync}=require('child_process');const isWin=process.platform==='win32';let p='';try{p=isWin?execSync('netstat -ano | findstr :3001',{encoding:'utf8'}):execSync('lsof -ti:3001',{encoding:'utf8'})}catch{}const l=p.trim().split('\\n').filter(Boolean);if(l.length===0){console.log('Port 3001 is free');process.exit(0)}const pid=isWin?l.map(x=>x.trim().split(/\\s+/).pop()).filter(Boolean).pop():l.pop();console.log('Killing PID '+pid);isWin?execSync('taskkill /PID '+pid+' /F',{stdio:'inherit'}):execSync('kill -9 '+pid,{stdio:'inherit'});console.log('Port 3001 freed')\"",
     "test:contracts": "vitest run tests/contracts",
     "typecheck": "tsc --noEmit",
