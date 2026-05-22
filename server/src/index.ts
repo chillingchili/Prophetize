@@ -3,17 +3,17 @@ import http from "http";
 import express from "express";
 import cors from "cors";
 import { Server as SocketIOServer } from "socket.io";
-import userRoutes from "../src/routes/userRoutes";
-import marketRoutes from "../src/routes/marketRoutes";
-import transactionRoutes from "../src/routes/transactionRoutes";
-import portfolioRoutes from '../src/routes/portfolioRoutes';
-import leaderboardRoutes from '../src/routes/leaderboardRoutes';
-import notificationRoutes from "../src/routes/notificationRoutes";
-import socialRoutes from "../src/routes/socialRoutes";
-import adminRoutes from "../src/routes/adminRoutes";
-import adminConflictRoutes from "../src/routes/adminConflictRoutes";
-import adminAnalyticsRoutes from "../src/routes/adminAnalyticsRoutes";
-import { initializeRealtimeEmitter } from "../src/services/realtimeService";
+import userRoutes from "./routes/userRoutes";
+import marketRoutes from "./routes/marketRoutes";
+import transactionRoutes from "./routes/transactionRoutes";
+import portfolioRoutes from './routes/portfolioRoutes';
+import leaderboardRoutes from './routes/leaderboardRoutes';
+import notificationRoutes from "./routes/notificationRoutes";
+import socialRoutes from "./routes/socialRoutes";
+import adminRoutes from "./routes/adminRoutes";
+import adminConflictRoutes from "./routes/adminConflictRoutes";
+import adminAnalyticsRoutes from "./routes/adminAnalyticsRoutes";
+import { initializeRealtimeEmitter } from "./services/realtimeService";
 
 const DEFAULT_ALLOWED_ORIGINS = [
     'http://localhost:8081',
