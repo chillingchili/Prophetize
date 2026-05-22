@@ -6,3 +6,6 @@ backendUrl.ts
 expo-env.d.ts
 .env
 # @end expo-cli
+# Native directories
+android/
+ios/
