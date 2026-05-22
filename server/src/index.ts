@@ -29,11 +29,7 @@ const allowedOrigins = (() => {
         .map((origin) => origin.trim())
         .filter(Boolean);
 
-    if (configured.length > 0) {
-        return configured;
-    }
-
-    return DEFAULT_ALLOWED_ORIGINS;
+    return [...DEFAULT_ALLOWED_ORIGINS, ...configured];
 })();
 
 const isPrivateLanHost = (host: string) => {
