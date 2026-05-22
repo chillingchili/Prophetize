@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: completed
-stopped_at: Completed 13-02-PLAN.md (no commit — user prefers manual commits)
-last_updated: "2026-05-21T13:23:47.208Z"
-last_activity: "2026-05-21 - Plan 13-01: Fix DB layer — payout formula, constraint, missing columns, RPC function"
+status: shipped
+stopped_at: v1.0 shipped — push notifications, auto-resolution, portfolio chart, splash & icons
+last_updated: "2026-05-22"
+last_activity: "2026-05-22 - Phase 14 shipped — v1.0 tagged and pushed"
 progress:
   total_phases: 14
   completed_phases: 7
